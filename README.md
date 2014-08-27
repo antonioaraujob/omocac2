@@ -1,4 +1,4 @@
-omocac2
-=======
+omocac
+======
 
-Optimización multiobjetivo con algoritmo cultural y mutación dirigida
+Optimización Multiobjetivo con Algoritmos Culturales y Mutación Dirigida
