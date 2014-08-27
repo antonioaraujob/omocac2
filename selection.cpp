@@ -232,7 +232,6 @@ void Selection::makeTournaments(int individualIndex, Individual * individual, QL
                 }
                 else
                 {
-                    // TODO: averiguar que hacer con el individuo que cae fuera
 
                     // b) si alguno cae fuera de la rejilla, gana el que este afuera
                     if ( !nGrid->individualInsideGrid(individual) )

@@ -2,6 +2,8 @@
 
 //#include "scan.h"
 
+#include "QMessageBox"
+
 #include <random>
 #include <chrono>
 
@@ -76,6 +78,18 @@ void Mutation::doDirectedMutation(QList<Individual *> population, double std,
 {
     qDebug("Mutation::doDirectedMutation con probabilidad %f", dMutationProbability);
 
+    for (int i=0; i<10;i++)
+    {
+        qDebug("%f", getRandomUniform());
+    }
+
+
+    QMessageBox msg;
+    msg.setText("TODO!!!");
+    msg.exec();
+    return;
+
+
 
 
 
@@ -90,6 +104,11 @@ QList<Individual *> Mutation::getNewPopulation()
 int Mutation::getRandom(int low, int high)
 {
     return qrand() % ((high + 1) - low) + low;
+}
+
+double Mutation::getRandomUniform()
+{
+    return qrand()/double(RAND_MAX);
 }
 
 int Mutation::mutateIndividualParameter(int index, int mean, double std, double currentParameterValue, Individual * offspring)

@@ -343,14 +343,14 @@ void Simulation::printGrid()
 void Simulation::mutatePopulation()
 {
     // utilizar la mutación dirigida
-//    if (directedMutation)
-//    {
-//        mutation->doDirectedMutation(populationList, getStdDeviation(), deployedAPs, directedMutationProbability);
-//    }
-//    else
-//    {
+    if (directedMutation)
+    {
+        mutation->doDirectedMutation(populationList, getStdDeviation(), deployedAPs, directedMutationProbability);
+    }
+    else
+    {
         mutation->doMutation(populationList, getStdDeviation(), deployedAPs);
-//    }
+    }
 
     mutatedPopulationList = mutation->getNewPopulation();
 

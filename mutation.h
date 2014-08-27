@@ -81,6 +81,12 @@ public:
     int getRandom(int low, int high);
 
     /**
+     * @brief Retorna un número aleatorio uniforme entre 0 y 1
+     * @return número aleatorio uniforme entre 0 y 1
+     */
+    double getRandomUniform();
+
+    /**
      * @brief Ejecuta una mutacion gausiana de un parametro de un individuo
      * @param index indice del parametro a mutar
      * @param mean media de la distribucion normal

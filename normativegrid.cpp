@@ -20,14 +20,22 @@ NormativeGrid::NormativeGrid(int subIntervals, NormativePhenotypicPart * nPhenot
 
     subIntervalNumber = subIntervals;
 
-
+/*
     ptrGrid = new int* [subIntervalNumber];
     for (int i = 0; i < subIntervalNumber; i++)
     {
         ptrGrid[i] = new int[subIntervalNumber];
     }
+*/
 
+    ptrGrid = new Cell* [subIntervalNumber];
+    for (int i = 0; i < subIntervalNumber; i++)
+    {
+        //ptrGrid[i] = new int[subIntervalNumber];
+        ptrGrid[i] = new Cell[subIntervalNumber];
+    }
 
+/*
     QString row;
 
     qDebug("Elementos de la Matriz : ");
@@ -43,6 +51,33 @@ NormativeGrid::NormativeGrid(int subIntervals, NormativePhenotypicPart * nPhenot
         qDebug(qPrintable(row));
         row.clear();
     }
+*/
+    QString row;
+
+    Cell * cell;
+
+    //Individual * individual;
+    qDebug("Elementos de la Matriz : ");
+    for (int i = 0; i < subIntervalNumber; i++)
+    {
+        for (int j = 0; j < subIntervalNumber; j++)
+        {
+            cell = new Cell();
+            //individual = new Individual(j);
+            //individual->printIndividual();
+            //cell->addIndividual(individual);
+
+            // inicializar el contador en 0
+            ptrGrid[i][j] = *cell;
+
+            row.append("(");
+            row.append(QString::number(ptrGrid[i][j].getCount()));
+            row.append(")-");
+        }
+        qDebug(qPrintable(row));
+        row.clear();
+    }
+
 
     // construir los intervalos de F1 y de F2
     buildSubintervalsF1(nPhenotypicPart);
@@ -96,19 +131,23 @@ void NormativeGrid::addIndividualToGrid(Individual * ind)
 
 
     // incrementar el contador de la celda en los subintervalos
-    int count = ptrGrid[indexF1][indexF2];
+    //int count = ptrGrid[indexF1][indexF2];
     //qDebug("...valor de count: %d",count);
     //grid[indexF1].append(indexF2) = increment+1;
-    ptrGrid[indexF1][indexF2] = count+1;
+    //ptrGrid[indexF1][indexF2] = count+1;
 
-    qDebug("...valor de ptrGrid[%d][%d]: %d",indexF1, indexF2, ptrGrid[indexF1][indexF2]);
+    ptrGrid[indexF1][indexF2].addIndividual(ind);
+
+
+
+    qDebug("...valor de ptrGrid[%d][%d]: %d",indexF1, indexF2, ptrGrid[indexF1][indexF2].getCount());
 
 }
 
 
 int NormativeGrid::getCount(int f1, int f2)
 {
-    return ptrGrid[f1][f2];
+    return ptrGrid[f1][f2].getCount();
 }
 
 
@@ -210,7 +249,7 @@ void NormativeGrid::printGrid()
     QString row;
     for (int i = 0; i < subIntervalNumber; i++) {
         for (int j = 0; j < subIntervalNumber; j++) {
-            row.append(QString::number(ptrGrid[i][j]));
+            row.append(QString::number(ptrGrid[i][j].getCount()));
             row.append("-");
         }
         qDebug(qPrintable(row));

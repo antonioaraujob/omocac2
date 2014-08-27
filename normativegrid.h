@@ -6,6 +6,7 @@
 #include "individual.h"
 #include "normativephenotypicpart.h"
 #include "gridsubinterval.h"
+#include "cell.h"
 
 
 /**
@@ -57,7 +58,7 @@ private:
      * En el eje X estaran los valores de la funcion objetivo 1 descubierta
      * En el eje Y estaran los valores de la funcion objetivo 2 latencia
      */
-    int ** ptrGrid;
+    Cell ** ptrGrid;
 
 public:
 
