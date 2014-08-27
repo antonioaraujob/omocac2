@@ -8,7 +8,7 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets printsupport
 
-TARGET = omocac
+TARGET = omocac2
 TEMPLATE = app
 
 QMAKE_CXXFLAGS += -std=c++11
@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     gridsubinterval.cpp \
     mutation.cpp \
     selection.cpp \
-    qcustomplot.cpp
+    qcustomplot.cpp \
+    cell.cpp
 
 HEADERS  += mainwindow.h \
     individual.h \
@@ -36,6 +37,7 @@ HEADERS  += mainwindow.h \
     gridsubinterval.h \
     mutation.h \
     selection.h \
-    qcustomplot.h
+    qcustomplot.h \
+    cell.h
 
 FORMS    += mainwindow.ui
