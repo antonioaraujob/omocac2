@@ -139,6 +139,20 @@ public:
      * @return
      */
     int getNewParameterAPs(int channel, double minChannelTime, double maxChannelTime);
+
+    /**
+     * @brief Ejecuta la mutacion original del articulo utilizando como patron el individuo
+     * pasado como argumento
+     * @param father individuo a tomar como patron para la mutacion original
+     * @param std desviacion estandar de la distribucion normal (parametro del algoritmo)
+     * @param deployedAp numero de APs desplegados
+     */
+    void originalMutation(Individual * father, double std, int deployedAp);
+
+    /**
+     * @brief Ejecuta la mutacion dirigida
+     */
+    void directedMutation();
 };
 
 #endif // MUTATION_H

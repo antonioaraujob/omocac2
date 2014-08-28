@@ -55,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEditMatchPerTournament->setText(QString::number(matches));
     ui->lineEditMatchPerTournament->setToolTip("Un valor recomendado es Poblacion/2");
 
-    QDoubleValidator * validatorDirectedMutation = new QDoubleValidator(0.0, 1.0, 2, validatorDirectedMutation);
+    QDoubleValidator * validatorDirectedMutation = new QDoubleValidator(0.0, 1.0, 2, this);
     validatorDirectedMutation->setNotation(QDoubleValidator::StandardNotation);
     ui->lineEditDirectedMutation->setValidator(validatorDirectedMutation);
     ui->lineEditDirectedMutation->setToolTip("[0..1]");

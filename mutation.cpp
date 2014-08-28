@@ -78,20 +78,34 @@ void Mutation::doDirectedMutation(QList<Individual *> population, double std,
 {
     qDebug("Mutation::doDirectedMutation con probabilidad %f", dMutationProbability);
 
-    for (int i=0; i<10;i++)
+    double randomNumber = 0;
+
+    Individual * father;
+
+    // recorrer la lista de poblacion
+    for (int i=0; i<population.count(); i++)
     {
-        qDebug("%f", getRandomUniform());
+        father = population.at(i);
+        randomNumber = getRandomUniform();
+
+        qDebug("Numero aleatorio: %f", randomNumber);
+        qDebug("dMutationProbability: %f", dMutationProbability);
+
+        if (randomNumber < dMutationProbability)
+        {
+            qDebug("--> directedMutation()");
+            // hacer la mutacion dirigida
+            // escribir una funcion
+            directedMutation();
+        }
+        else
+        {
+            // hacer la mutacion gausiana con el papa como patron
+            // escribir una funcion
+            originalMutation(father, std, deployedAp);
+        }
+
     }
-
-
-    QMessageBox msg;
-    msg.setText("TODO!!!");
-    msg.exec();
-    return;
-
-
-
-
 
 }
 
@@ -285,3 +299,82 @@ int Mutation::getNewParameterAPs(int channel, double minChannelTime, double maxC
 
 
 }
+
+
+void Mutation::originalMutation(Individual * father, double std, int deployedAp)
+{
+    qDebug("Mutation::originalMutation(Individual * father)");
+
+    QMessageBox msg;
+    msg.setText("*** MUTACION ORIGINAL***");
+    msg.exec();
+
+    //father = population.at(i);
+
+    Individual * offspring;
+    offspring = new Individual(deployedAp);
+    //qDebug("===== offspring id: %d", offspring->getIndividualId());
+
+    int newParameterValue = 0;
+    // crear un individuo (offspring) y mutar todos sus parametros
+    for (int i=0; i<father->getNumberOfParameters(); i++)
+    {
+        newParameterValue = mutateIndividualParameter(i, 0 /*father->getParameter(i)*/,std, father->getParameter(i), offspring);
+        offspring->setParameter(i, newParameterValue);
+
+    }
+    // se muto el offspring ahora limpiar el diccionario de canales usados
+    // asignar el diccionario de canales utilizados en la mutacion en falso
+    for (int c=1; c<=11;c++)
+    {
+        channelsUsedForMutation[c]=false;
+    }
+
+    // evaluar el offspring con los nuevos valores de parametros
+    offspring->calculateDiscoveryValue();
+    offspring->calculateLatencyValue();
+
+    // agregar el individuo padre y el individuo hijo a la lista newPopulation
+    // newPopulation sera de tamano 2p
+    newPopulation.append(father);
+    newPopulation.append(offspring);
+}
+
+
+void Mutation::directedMutation()
+{
+    QMessageBox msg;
+    msg.setText("*** MUTACION DIRIGIDA***");
+    msg.exec();
+    return;
+
+
+    //Identificar las celdas de la rejilla que tienen contadores mayores a cero.
+
+    //Agregar las celdas en una lista de Cells.
+
+    //Ordenar la lista de menor a mayor cantidad de individuos por celda.
+
+    //Marcar las celdas que tengan la misma cantidad de individuos.
+
+    // Si hay dos o más celdas con menor cantidad de individuos entonces
+    //    verificar si las dos celdas son no vecinas entonces
+    //        seleccionar una celda aleatoria
+    //    en caso contrario // las celdas son vecinas
+    //        tomar la celda siguiente no vecina con igual número de individuos
+    //        o tomar la siguiente celda con más número de individuos de la lista
+
+    // Si hay una sola celda con menor cantidad de individuos entonces
+    //    Escoger la celda que tenga menor cantidad de individuos
+    //    Si la celda tiene un solo individuo entonces
+    //        Escoger el individuo como patron para la mutación
+
+    // en caso contrario // la celda tiene dos o más individuos
+
+
+}
+
+
+
+
+
