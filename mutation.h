@@ -5,6 +5,7 @@
 #include <QHash>
 
 #include "individual.h"
+#include "normativegrid.h"
 
 #include "scan.h"
 
@@ -60,8 +61,9 @@ public:
      * @param std desviacion estandar de la variable aleatoria normal
      * @param deployedAp numero de AP desplegados en el entorno
      * @param dMutationProbability
+     * @param grid Puntero a la rejilla
      */
-    void doDirectedMutation(QList<Individual *> population, double std, int deployedAp, double dMutationProbability);
+    void doDirectedMutation(QList<Individual *> population, double std, int deployedAp, double dMutationProbability, NormativeGrid *grid);
 
     /**
      * @brief Retorna la nueva poblacion luego de la variacion.
@@ -151,8 +153,10 @@ public:
 
     /**
      * @brief Ejecuta la mutacion dirigida
+     *
+     * @param grid Puntero a la rejilla para observar las Cell a utilizar en la mutacion
      */
-    void directedMutation();
+    void directedMutation(NormativeGrid * grid);
 };
 
 #endif // MUTATION_H

@@ -74,7 +74,7 @@ void Mutation::doMutation(QList<Individual *> population, double std, int deploy
 
 
 void Mutation::doDirectedMutation(QList<Individual *> population, double std,
-                                  int deployedAp, double dMutationProbability)
+                                  int deployedAp, double dMutationProbability, NormativeGrid * grid)
 {
     qDebug("Mutation::doDirectedMutation con probabilidad %f", dMutationProbability);
 
@@ -96,7 +96,7 @@ void Mutation::doDirectedMutation(QList<Individual *> population, double std,
             qDebug("--> directedMutation()");
             // hacer la mutacion dirigida
             // escribir una funcion
-            directedMutation();
+            directedMutation(grid);
         }
         else
         {
@@ -341,7 +341,7 @@ void Mutation::originalMutation(Individual * father, double std, int deployedAp)
 }
 
 
-void Mutation::directedMutation()
+void Mutation::directedMutation(NormativeGrid *grid)
 {
     QMessageBox msg;
     msg.setText("*** MUTACION DIRIGIDA***");

@@ -345,7 +345,7 @@ void Simulation::mutatePopulation()
     // utilizar la mutación dirigida
     if (directedMutation)
     {
-        mutation->doDirectedMutation(populationList, getStdDeviation(), deployedAPs, directedMutationProbability);
+        mutation->doDirectedMutation(populationList, getStdDeviation(), deployedAPs, directedMutationProbability, nGrid);
     }
     else
     {
