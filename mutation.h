@@ -30,6 +30,12 @@ private:
      */
     QHash<int, bool> channelsUsedForMutation;
 
+    /**
+     * @brief Desviacion estandar para la mutacion
+     */
+    double stdDeviation;
+
+
 public:
 
     /**
@@ -63,7 +69,7 @@ public:
      * @param dMutationProbability
      * @param grid Puntero a la rejilla
      */
-    void doDirectedMutation(QList<Individual *> population, double std, int deployedAp, double dMutationProbability, NormativeGrid *grid);
+    void doDirectedMutation(QList<Individual *> population, double std, int deployedAp, double dMutationProbability, NormativeGrid * grid);
 
     /**
      * @brief Retorna la nueva poblacion luego de la variacion.
@@ -155,8 +161,22 @@ public:
      * @brief Ejecuta la mutacion dirigida
      *
      * @param grid Puntero a la rejilla para observar las Cell a utilizar en la mutacion
+     * @param father Individuo padre para la mutacion
      */
-    void directedMutation(NormativeGrid * grid);
+    void directedMutation(NormativeGrid * grid, Individual * father);
+
+    /**
+     * @brief Asigna la desviacion estandar para la mutacion
+     * @param std desviacion estandar para la mutacion
+     */
+    void setStdDeviation(double std);
+
+    /**
+     * @brief Retorna la desviacion estandar de la mutacion
+     * @return desviacion estandar de la mutacion
+     */
+    double getStdDeviation();
+
 };
 
 #endif // MUTATION_H

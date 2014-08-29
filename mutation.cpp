@@ -7,10 +7,22 @@
 #include <random>
 #include <chrono>
 
+/**
+ * @brief Funcion de comparacion de celdas con respecto al valor de individuos en la lista
+ * @param p1 Celda 1 a comparar
+ * @param p2 Celda 2 a comparar
+ * @return Verdadero si p1 es menor que p2 con respecto a la funcion objetivo de descubrimiento
+ */
+inline static bool cell1LessThanCell2(Cell * cell1, Cell * cell2)
+{
+    return cell1->getCount() < cell2->getCount();
+}
+
 Mutation::Mutation()
 {
     newPopulation.clear();
 
+    stdDeviation = 0;
 
     // inicializar el diccionario de canales utilizados en la mutacion en falso
     for (int i=1; i<=11;i++)
@@ -94,9 +106,15 @@ void Mutation::doDirectedMutation(QList<Individual *> population, double std,
         if (randomNumber < dMutationProbability)
         {
             qDebug("--> directedMutation()");
+
+            setStdDeviation(std);
+
             // hacer la mutacion dirigida
             // escribir una funcion
-            directedMutation(grid);
+            directedMutation(grid, father);
+
+            // agregar el father
+            //newPopulation.append(father);
         }
         else
         {
@@ -341,19 +359,57 @@ void Mutation::originalMutation(Individual * father, double std, int deployedAp)
 }
 
 
-void Mutation::directedMutation(NormativeGrid *grid)
+void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
 {
     QMessageBox msg;
     msg.setText("*** MUTACION DIRIGIDA***");
     msg.exec();
-    return;
+    //return;
 
 
     //Identificar las celdas de la rejilla que tienen contadores mayores a cero.
 
-    //Agregar las celdas en una lista de Cells.
+    // Agregar las celdas en una lista de Cells.
+    // lista de celdas pobladas
+    QList<Cell *> cellList = grid->getPopulatedCellList();
+    qDebug("   numero de celdas con individuos: %d", cellList.count());
 
     //Ordenar la lista de menor a mayor cantidad de individuos por celda.
+    qSort(cellList.begin(), cellList.end(), cell1LessThanCell2);
+
+
+    for (int i=0; i<cellList.count();i++)
+    {
+        qDebug("Celda (%d-%d) con: %d individuos", cellList.at(i)->getSubintervavF1(),
+        cellList.at(i)->getSubintervalF2(), cellList.at(i)->getCount());
+    }
+
+    // no hay como ejercer influencia en la mutacion
+    if (cellList.count() == 0)
+    {
+        originalMutation(father, getStdDeviation(), /*deployedAp*/ 10);
+        return;
+    }
+    else // existe al menos una celda con individuo en la rejilla
+    {
+        int randomCell = getRandom(0,cellList.count()-1);
+
+        // la celda tiene solo un individuo
+        if (cellList.at(randomCell)->getCount() == 1)
+        {
+            qDebug("   la celda tiene un solo individuo");
+            originalMutation(father, getStdDeviation(), /*deployedAp*/ 10);
+            return;
+        }
+        else // la celda tiene dos o mas individuos
+        {
+            qDebug("   la celda tiene dos o mas individuos");
+            // TODO
+        }
+
+    }
+
+
 
     //Marcar las celdas que tengan la misma cantidad de individuos.
 
@@ -372,9 +428,24 @@ void Mutation::directedMutation(NormativeGrid *grid)
     // en caso contrario // la celda tiene dos o más individuos
 
 
+
+
+
+
+
+    // TODO: agregar el offspring a newPopulation
+
 }
 
 
+void Mutation::setStdDeviation(double std)
+{
+    stdDeviation = std;
+}
 
+double Mutation::getStdDeviation()
+{
+    return stdDeviation;
+}
 
 

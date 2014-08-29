@@ -136,9 +136,9 @@ void NormativeGrid::addIndividualToGrid(Individual * ind)
     //grid[indexF1].append(indexF2) = increment+1;
     //ptrGrid[indexF1][indexF2] = count+1;
 
-    ptrGrid[indexF1][indexF2].addIndividual(ind);
+    ptrGrid[indexF1][indexF2].addIndividual(ind, indexF1, indexF2);
 
-
+    populatedCellList.append(&ptrGrid[indexF1][indexF2]);
 
     qDebug("...valor de ptrGrid[%d][%d]: %d",indexF1, indexF2, ptrGrid[indexF1][indexF2].getCount());
 
@@ -295,6 +295,9 @@ int NormativeGrid::getCountOfCell(Individual * individual)
 
 }
 
-
+QList<Cell*> NormativeGrid::getPopulatedCellList()
+{
+    return populatedCellList;
+}
 
 

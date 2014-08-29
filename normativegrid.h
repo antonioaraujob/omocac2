@@ -60,6 +60,11 @@ private:
      */
     Cell ** ptrGrid;
 
+    /**
+     * @brief Lista de celdas de la rejilla con al menos un individuo
+     */
+    QList<Cell *> populatedCellList;
+
 public:
 
     /**
@@ -152,6 +157,12 @@ public:
      * @return Numero de elementos en la celda a la que pertenece el individuo
      */
     int getCountOfCell(Individual * individual);
+
+    /**
+    * @brief Retorna la lista de celdas pobladas (con mas de un individuo) en la rejilla
+    * @return Retorna la lista de celdas pobladas (con mas de un individuo) en la rejilla
+    */
+    QList<Cell*> getPopulatedCellList();
 };
 
 #endif // NORMATIVEGRID_H

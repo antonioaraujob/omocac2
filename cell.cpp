@@ -2,7 +2,7 @@
 
 Cell::Cell()
 {
-
+    cellIndividualList.clear();
 }
 
 Cell::~Cell()
@@ -20,9 +20,11 @@ Individual * Cell::getIndividual(int index)
     return cellIndividualList.at(index);
 }
 
-void Cell::addIndividual(Individual *individual)
+void Cell::addIndividual(Individual *individual, int indexF1, int indexF2)
 {
     cellIndividualList.append(individual);
+    f1 = indexF1;
+    f2 = indexF2;
 }
 
 
@@ -39,4 +41,14 @@ Cell& Cell::operator = (const Cell &cell)
         this->cellIndividualList = cell.cellIndividualList;
     }
     return *this;
+}
+
+int Cell::getSubintervavF1()
+{
+    return f1;
+}
+
+int Cell::getSubintervalF2()
+{
+    return f2;
 }

@@ -131,7 +131,8 @@ double Individual::getRandomMinChannelTime()
     return qrand() % ((high + 1) - low) + low;
 }
 
-double Individual::getRandomMaxChannelTime(){
+double Individual::getRandomMaxChannelTime()
+{
 
     // el rango es 10 <= MaxChannelTime <= 100
     int low = 10;
@@ -139,8 +140,9 @@ double Individual::getRandomMaxChannelTime(){
     return qrand() % ((high + 1) - low) + low;
 }
 
-double Individual::getAPNumberOnChannel(int numberOfApsDeployed, int channel){
-
+double Individual::getAPNumberOnChannel(int numberOfApsDeployed, int channel)
+{
+/*
     // la proporcion de APs que operan en cada canal es tomada del articulo
     //
     if (channel == 1)
@@ -187,6 +189,8 @@ double Individual::getAPNumberOnChannel(int numberOfApsDeployed, int channel){
     {
         return (numberOfApsDeployed * 25)/100;
     }
+*/
+    return 0;
 }
 
 void Individual::printIndividual()

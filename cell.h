@@ -16,8 +16,6 @@ class Cell
 
 private:
 
-    int count;
-
     /**
     * @brief Lista de individuos cuyos valores de funciones objetivo caen en los
     * subintervalos correspondiente a la celda.
@@ -64,8 +62,10 @@ public:
     /**
      * @brief Agrega un individuo a la lista de individuos de la celda
      * @param individual individuo a agregar a la lista.
+     * @param indexF1 indice del subintervalo para F1
+     * @param indexF1 indice del subintervalo para F2
      */
-    void addIndividual(Individual * individual);
+    void addIndividual(Individual * individual,  int indexF1, int indexF2);
 
     /**
      * @brief Retorna la lista de individuos de la Cell
@@ -80,6 +80,18 @@ public:
      * @return Cell asignada
      */
     Cell& operator = (const Cell &cell);
+
+    /**
+    * @brief Retorna el valor del indice del subintervalo de F1 dentro de la rejilla
+    * @return valor del indice del subintervalo de F1 dentro de la rejilla
+    */
+    int getSubintervavF1();
+
+    /**
+    * @brief Retorna el valor del indice del subintervalo de F2 dentro de la rejilla
+    * @return valor del indice del subintervalo de F1 dentro de la rejilla
+    */
+    int getSubintervalF2();
 
 };
 

@@ -226,8 +226,6 @@ void MainWindow::executeAlgorithm()
         // actualizar la rejilla con todos los individuos no dominados recien agregados al archivo externo
         // durante la generación actual
         //
-        // TODO: se necesita una funcion que retorne los individuos recien agregados al archivo externo durante la
-        // generacion actual
 
         simulation->updateGrid(simulation->getExternalFile()->getCurrentGenerationIndividualList());
         simulation->getExternalFile()->resetCurrentGenerationIndividualList();

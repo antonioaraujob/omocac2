@@ -324,7 +324,8 @@ void Simulation::updateGrid(QList<Individual *> nonDominated)
 
         if(!nGrid->individualInsideGrid(auxIndividual))
         {
-            //qDebug("%%%%%%%% el individuo no pertenece a la grid");
+            // TODO: revisar esto:
+            qDebug("%%%%%%%% el individuo no pertenece a la grid");
             //auxIndividual->printIndividual();
             //outOfGridIndividualList.append(auxIndividual);
         }
