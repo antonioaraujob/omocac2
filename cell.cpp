@@ -43,7 +43,7 @@ Cell& Cell::operator = (const Cell &cell)
     return *this;
 }
 
-int Cell::getSubintervavF1()
+int Cell::getSubintervalF1()
 {
     return f1;
 }

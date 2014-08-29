@@ -76,7 +76,10 @@ public slots:
      */
     void activateDirectedMutation(int state);
 
-
+    /**
+     * @brief Slot para cambiar el valor del numero de encuentros por individuo en el torneo
+     * @param str
+     */
     void checkPopulationSize(const QString & str);
 
 private:

@@ -163,6 +163,17 @@ public:
     * @return Retorna la lista de celdas pobladas (con mas de un individuo) en la rejilla
     */
     QList<Cell*> getPopulatedCellList();
+
+    /**
+     * @brief Retorna si la celda identificada con las coordenadas pasadas como argumento ya
+     * se encuentra insertada en la lista de celdas que tienen al menos un individuo
+     * @param indexF1 indice del subintervalo para F1
+     * @param indexF2 indice del subintervalo para F2
+     * @return si la celda identificada con las coordenadas pasadas como argumento ya
+     */
+    bool isCellInCellList(int indexF1, int indexF2);
+
+
 };
 
 #endif // NORMATIVEGRID_H

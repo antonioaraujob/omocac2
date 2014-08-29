@@ -85,7 +85,7 @@ public:
     * @brief Retorna el valor del indice del subintervalo de F1 dentro de la rejilla
     * @return valor del indice del subintervalo de F1 dentro de la rejilla
     */
-    int getSubintervavF1();
+    int getSubintervalF1();
 
     /**
     * @brief Retorna el valor del indice del subintervalo de F2 dentro de la rejilla

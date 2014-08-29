@@ -90,6 +90,8 @@ void Mutation::doDirectedMutation(QList<Individual *> population, double std,
 {
     qDebug("Mutation::doDirectedMutation con probabilidad %f", dMutationProbability);
 
+    newPopulation.clear();
+
     double randomNumber = 0;
 
     Individual * father;
@@ -325,7 +327,7 @@ void Mutation::originalMutation(Individual * father, double std, int deployedAp)
 
     QMessageBox msg;
     msg.setText("*** MUTACION ORIGINAL***");
-    msg.exec();
+    //msg.exec();
 
     //father = population.at(i);
 
@@ -363,12 +365,11 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
 {
     QMessageBox msg;
     msg.setText("*** MUTACION DIRIGIDA***");
-    msg.exec();
+    //msg.exec();
     //return;
 
 
     //Identificar las celdas de la rejilla que tienen contadores mayores a cero.
-
     // Agregar las celdas en una lista de Cells.
     // lista de celdas pobladas
     QList<Cell *> cellList = grid->getPopulatedCellList();
@@ -380,7 +381,7 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
 
     for (int i=0; i<cellList.count();i++)
     {
-        qDebug("Celda (%d-%d) con: %d individuos", cellList.at(i)->getSubintervavF1(),
+        qDebug("Celda (%d-%d) con: %d individuos", cellList.at(i)->getSubintervalF1(),
         cellList.at(i)->getSubintervalF2(), cellList.at(i)->getCount());
     }
 
@@ -405,6 +406,9 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
         {
             qDebug("   la celda tiene dos o mas individuos");
             // TODO
+            QMessageBox msg;
+            msg.setText("*** MUTACION DIRIGIDA***\nLa celda tiene dos o mas individuos!!!\TODO!");
+            msg.exec();
         }
 
     }

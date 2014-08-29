@@ -138,7 +138,13 @@ void NormativeGrid::addIndividualToGrid(Individual * ind)
 
     ptrGrid[indexF1][indexF2].addIndividual(ind, indexF1, indexF2);
 
-    populatedCellList.append(&ptrGrid[indexF1][indexF2]);
+    // agregar la celda a la lista de celda solo cuando esta no se haya
+    // agregado previamente
+    if (!isCellInCellList(indexF1,indexF2))
+    {
+        populatedCellList.append(&ptrGrid[indexF1][indexF2]);
+    }
+
 
     qDebug("...valor de ptrGrid[%d][%d]: %d",indexF1, indexF2, ptrGrid[indexF1][indexF2].getCount());
 
@@ -299,5 +305,23 @@ QList<Cell*> NormativeGrid::getPopulatedCellList()
 {
     return populatedCellList;
 }
+
+
+bool NormativeGrid::isCellInCellList(int indexF1, int indexF2)
+{
+    for (int i=0;i<populatedCellList.count(); i++)
+    {
+        if ( (populatedCellList.at(i)->getSubintervalF1() == indexF1) &&
+            (populatedCellList.at(i)->getSubintervalF2() == indexF2) )
+        {
+            // la celda identificada con (indexF1,indexF2) ya existe en la lista
+            return true;
+        }
+    }
+    return false;
+}
+
+
+
 
 

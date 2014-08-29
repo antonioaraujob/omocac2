@@ -347,6 +347,18 @@ public:
      */
     void addIndividualToOutOfGridIndividualList(Individual *outOfGridIndividual);
 
+    /**
+     * @brief Evalua los individuos con respecto a las funciones objetivo
+     */
+    void evaluateIndividuals();
+
+    /**
+     * @brief Imprime por pantalla la lista de individuos para propositos de depuracion
+     * @param list lista de individuos a imprimir por pantalla
+     */
+    void printList(QList<Individual*> list);
+
+
 };
 
 #endif // SIMULATION_H

@@ -124,25 +124,11 @@ void MainWindow::executeAlgorithm()
     out << "Desviacion estandar de la mutacion gausiana: " << ui->lineEditMutationStd->text() << endl;
     out << "Numero de APs desplegados: " << 25 << endl;
 
-
-
     // inicializar poblacion de tamano P
     simulation->initializePopulation();
 
-
     // evaluar poblacion inicial
-    // TODO
-
-/*
-    // encontrar los individuos no dominados de la poblacion
-    QList<Individual *> nonDominatedList = simulation->getNonDominatedPopulationApproach1();
-    qDebug("Numero de individuos en la poblacion no dominada:");
-    qDebug(qPrintable(QString::number(nonDominatedList.count())));
-    for (int i = 0; i < nonDominatedList.count(); i++)
-    {
-        nonDominatedList.at(i)->printIndividual();
-    }
-*/
+    simulation->evaluateIndividuals();
 
     // inicializar parte fenotipica normativa del espacio de creencias
     simulation->initializeNormativePhenotypicPart();
@@ -173,16 +159,13 @@ void MainWindow::executeAlgorithm()
         QTextStream out(&file);
         out << endl<< "Generacion: "<< simulation->getCurrentGenerationNumber() <<"\n";
 
-
-
-
         // mutacion de la poblacion
         simulation->mutatePopulation();
         qDebug("...despues de simulation->mutatePopulation()");
 
 
         // evaluar hijos
-        // TODO
+        simulation->evaluateIndividuals();
 
         // realizar torneos y seleccionar poblacion
         simulation->selectPopulation();
@@ -196,22 +179,16 @@ void MainWindow::executeAlgorithm()
         qDebug("...Numero de individuos en la poblacion no dominada: %d", nonDominatedList.count());
 
 
-        Individual * ind;
-        qDebug("INDIVIDUOS no dominados antes de insertarlos en el archivo externo-------");
-        for (int i = 0; i < nonDominatedList.count(); i++)
-        {
-            ind = nonDominatedList.at(i);
-            ind->printIndividual();
-        }
-        qDebug("-------");
-
+        qDebug("-------INDIVIDUOS no dominados antes de insertarlos en el archivo externo-------");
+        simulation->printList(nonDominatedList);
+        qDebug("--------------------------------------------------------------------------------");
         qDebug("...despues de obtener los individuos no dominados");
 
         // agregar los individuos no dominados al archivo externo
         simulation->addNonDominatedIndividualsToExternalFile(nonDominatedList);
         //simulation->addNonDominatedIndividualsToExternalFile(simulation->getPopulationList());
 
-        qDebug("INDIVIDUOS no dominados despues de insertarlos en el archivo externo: %d",
+        qDebug("Cantidad de INDIVIDUOS no dominados despues de insertarlos en el archivo externo: %d",
                simulation->getExternalFile()->getExternalFileList().count());
 
 
@@ -225,36 +202,21 @@ void MainWindow::executeAlgorithm()
 
         // actualizar la rejilla con todos los individuos no dominados recien agregados al archivo externo
         // durante la generación actual
-        //
-
         simulation->updateGrid(simulation->getExternalFile()->getCurrentGenerationIndividualList());
         simulation->getExternalFile()->resetCurrentGenerationIndividualList();
-        //qDebug("...despues de actualizar la rejilla");
-/*
-        if (countOfGenerations == simulation->getgNormative())
-        {
-            // actualizar la parte fenotipica normativa en caso de que hayan pasado gNormativa generaciones
-            simulation->updateNormativePhenotypicPart();
-            qDebug("despues de updateNormativePhenotypicPart()");
-            countOfGenerations = 0;
-        }
-*/
-
+        qDebug("...despues de actualizar la rejilla");
 
         qDebug("generacion actual: %d", simulation->getCurrentGenerationNumber());
 
         qDebug("****************************************************************************");
-        QString aux;
-        for (int z=0; z<simulation->getExternalFile()->getExternalFileList().count(); z++)
-        {
-            simulation->getExternalFile()->getExternalFileList().at(z)->printIndividual();
-        }
+        qDebug("Individuos del archivo externo");
+        simulation->printList(simulation->getExternalFile()->getExternalFileList());
         qDebug("****************************************************************************");
 
-        QMessageBox msg;
-        QString string = "Ver el Archivo externo al final de la generacion ";
-        string.append(QString::number(simulation->getCurrentGenerationNumber()));
-        msg.setText(string);
+        //QMessageBox msg;
+        //QString string = "Ver el Archivo externo al final de la generacion ";
+        //string.append(QString::number(simulation->getCurrentGenerationNumber()));
+        //msg.setText(string);
         //msg.exec();
 
 

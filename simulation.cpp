@@ -643,3 +643,31 @@ void Simulation::addIndividualToOutOfGridIndividualList(Individual * outOfGridIn
         }
     }
 }
+
+void Simulation::evaluateIndividuals()
+{
+    qDebug("MainWindow::evaluateIndividuals()");
+
+    Individual * individual;
+    for (int i=0; i<populationList.count();i++)
+    {
+        individual = populationList.at(i);
+        individual->calculateDiscoveryValue();
+        individual->calculateLatencyValue();
+
+    }
+
+
+}
+
+void Simulation::printList(QList<Individual*> list)
+{
+    for (int i = 0; i < list.count(); i++)
+    {
+        list.at(i)->printIndividual();
+    }
+}
+
+
+
+
