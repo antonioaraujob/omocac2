@@ -394,9 +394,10 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
     else // existe al menos una celda con individuo en la rejilla
     {
         int randomCell = getRandom(0,cellList.count()-1);
+        Cell * selectedCell = cellList.at(randomCell);
 
         // la celda tiene solo un individuo
-        if (cellList.at(randomCell)->getCount() == 1)
+        if (selectedCell->getCount() == 1)
         {
             qDebug("   la celda tiene un solo individuo");
             originalMutation(father, getStdDeviation(), /*deployedAp*/ 10);
@@ -409,6 +410,57 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             QMessageBox msg;
             msg.setText("*** MUTACION DIRIGIDA***\nLa celda tiene dos o mas individuos!!!\TODO!");
             msg.exec();
+
+
+
+            // ----------------------------------------------------------------
+            // primera etapa de la mutacion dirigida
+
+            int numberOfIndividuals = selectedCell->getCount();
+
+            Individual * individualI;
+            Individual * individualJ;
+            Individual * individualK;
+
+            QList<double> minList;
+            QList<double> maxList;
+
+            QHash<QString,double> meanAndStdDevHash;
+
+            // verlo primero por bloque y luego por individuo...
+
+            for (int i=0; i<numberOfIndividuals;i++)
+            {
+                for (int j=0; j<11; j++)
+                {
+                    // obtener los min y max y agregarlos en las listas respectivas
+                    minList.append(selectedCell->getIndividual(i)->getParameter((j*4)+1));
+                    maxList.append(selectedCell->getIndividual(i)->getParameter((j*4)+2));
+
+                    qDebug("gen %d", j);
+                    meanAndStdDevHash = calculateMeanAndStdDev(minList, maxList,0);
+
+                }
+
+
+
+            }
+
+
+
+
+            // prueba
+            for (int j=0;j<numberOfIndividuals;j++)
+            {
+                minList.append(selectedCell->getIndividual(j)->getParameter(1));
+                maxList.append(selectedCell->getIndividual(j)->getParameter(2));
+            }
+            QHash<QString,double> h = calculateMeanAndStdDev(minList, maxList,0);
+
+
+            // ----------------------------------------------------------------
+
+
         }
 
     }
@@ -451,5 +503,66 @@ double Mutation::getStdDeviation()
 {
     return stdDeviation;
 }
+
+
+QHash<QString, double> Mutation::calculateMeanAndStdDev(QList<double> minChannelTimeList, QList<double> maxChannelTimeList, int genIndex)
+{
+    // media de minchanneltime
+
+    double minChannelTimeSum = 0.0;
+    double maxChannelTimeSum = 0.0;
+
+    double meanMinChannelTime = 0.0;
+    double meanMaxChannelTime = 0.0;
+
+    double minChannelTimeStdSum = 0.0;
+    double maxChannelTimeStdSum = 0.0;
+
+    double stdDevMinChannelTime = 0.0;
+    double stdDevMaxChannelTime = 0.0;
+
+    QHash<QString, double> hash;
+
+    for (int i=0;i<minChannelTimeList.count();i++)
+    {
+        minChannelTimeSum = minChannelTimeSum + minChannelTimeList.at(i);
+    }
+    meanMinChannelTime = minChannelTimeSum / minChannelTimeList.count();
+    hash.insert("meanMinChannelTime", meanMinChannelTime);
+
+
+    for (int j=0; j<minChannelTimeList.count(); j++)
+    {
+        minChannelTimeStdSum = minChannelTimeStdSum + pow((minChannelTimeList.at(j)-meanMinChannelTime),2);
+    }
+    stdDevMinChannelTime = (sqrt(minChannelTimeStdSum/minChannelTimeList.count()));
+    hash.insert("stdDevMinChannelTime", stdDevMinChannelTime);
+
+
+    maxChannelTimeSum = 0.0;
+    for (int k=0;k<maxChannelTimeList.count();k++)
+    {
+        maxChannelTimeSum = maxChannelTimeSum + maxChannelTimeList.at(k);
+    }
+    meanMaxChannelTime = maxChannelTimeSum / maxChannelTimeList.count();
+    hash.insert("meanMaxChannelTime", meanMaxChannelTime);
+
+    for (int l=0; l<maxChannelTimeList.count(); l++)
+    {
+        maxChannelTimeStdSum = maxChannelTimeStdSum + pow((maxChannelTimeList.at(l)-meanMaxChannelTime),2);
+    }
+    stdDevMaxChannelTime = (sqrt(maxChannelTimeStdSum/maxChannelTimeList.count()));
+    hash.insert("stdDevMaxChannelTime", stdDevMaxChannelTime);
+
+
+    qDebug("meanMin: %f, stdDevMin: %f, meanMax: %f, sdtDevMax: %f",
+           hash.value("meanMinChannelTime"), hash.value("stdDevMinChannelTime"),
+           hash.value("meanMaxChannelTime"), hash.value("stdDevMaxChannelTime"));
+
+    return hash;
+}
+
+
+
 
 

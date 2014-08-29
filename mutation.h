@@ -177,6 +177,24 @@ public:
      */
     double getStdDeviation();
 
+    /**
+     * @brief Calcula la media y la deviación estandar del bloque/gen de un individuo
+     * pasado como argumento
+     *
+     * list[0]->media de minChannelTime
+     * list[1]->desviación estándar de minChannelTime
+     * list[2]->media de maxChannelTime
+     * list[3]->desviación estándar de maxChannelTime
+     *
+     * @param minChannelTimeList lista de valores de minChannelTime
+     * @param maxChannelTimeList lista de valores de maxChannelTime
+     * @param genIndex indice del gen del individuo
+     * @return Lista con media y desviación estándar de minChannelTime y media y desviación estándar de minChannelTime
+     */
+    QHash<QString, double> calculateMeanAndStdDev(QList<double> minChannelTimeList, QList<double> maxChannelTimeList, int genIndex);
+
+
+
 };
 
 #endif // MUTATION_H
