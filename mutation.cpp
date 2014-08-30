@@ -416,11 +416,16 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             // ----------------------------------------------------------------
             // primera etapa de la mutacion dirigida
 
+            // TODO: establecer el umbral como un parametro
+            double stdDevThreshold = 0.3;
+
             int numberOfIndividuals = selectedCell->getCount();
 
-            Individual * individualI;
-            Individual * individualJ;
-            Individual * individualK;
+            Individual * preOffspring = new Individual(10);
+
+            qDebug("-----");
+            preOffspring->printIndividual();
+            qDebug("-----");
 
             QList<double> minList;
             QList<double> maxList;
@@ -428,39 +433,72 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             QHash<QString,double> meanAndStdDevHash;
 
             // verlo primero por bloque y luego por individuo...
-
-            for (int i=0; i<numberOfIndividuals;i++)
+            // iterar por bloque
+            for (int i=0; i<11;i++)
             {
-                for (int j=0; j<11; j++)
+                // iterar por individuo
+                for (int j=0; j<numberOfIndividuals;j++)
                 {
                     // obtener los min y max y agregarlos en las listas respectivas
-                    minList.append(selectedCell->getIndividual(i)->getParameter((j*4)+1));
-                    maxList.append(selectedCell->getIndividual(i)->getParameter((j*4)+2));
+                    minList.append(selectedCell->getIndividual(j)->getParameter((i*4)+1));
+                    maxList.append(selectedCell->getIndividual(j)->getParameter((i*4)+2));
+                }
+                meanAndStdDevHash = calculateMeanAndStdDev(minList, maxList,0);
+                minList.clear();
+                maxList.clear();
 
-                    qDebug("gen %d", j);
-                    meanAndStdDevHash = calculateMeanAndStdDev(minList, maxList,0);
+                // verificar si la desviacion del min es menor que umbral
+                if (meanAndStdDevHash.value("stdDevMinChannelTime") < stdDevThreshold)
+                {
+                    preOffspring->setParameter(((i*4)+1),meanAndStdDevHash.value("meanMinChannelTime"));
+                }
+                else
+                {
+                    // asignar el valor mutado del parametro del padre
+                    preOffspring->setParameter(((i*4)+1),father->getParameter((i*4)+1));
 
                 }
-
-
-
+                // verificar si la desviacion del max es menor que umbral
+                if (meanAndStdDevHash.value("stdDevMaxChannelTime") < stdDevThreshold)
+                {
+                    preOffspring->setParameter(((i*4)+2),meanAndStdDevHash.value("meanMaxChannelTime"));
+                }
+                else
+                {
+                    // asignar el valor mutado del parametro del padre
+                    preOffspring->setParameter(((i*4)+1),father->getParameter((i*4)+2));
+                }
+                meanAndStdDevHash.clear();
             }
-
-
-
-
-            // prueba
-            for (int j=0;j<numberOfIndividuals;j++)
-            {
-                minList.append(selectedCell->getIndividual(j)->getParameter(1));
-                maxList.append(selectedCell->getIndividual(j)->getParameter(2));
-            }
-            QHash<QString,double> h = calculateMeanAndStdDev(minList, maxList,0);
-
+            qDebug("-----");
+            preOffspring->printIndividual();
+            qDebug("-----");
 
             // ----------------------------------------------------------------
+            // ----------------------------------------------------------------
+            // segunda etapa de la mutacion dirigida
+            // identificar la secuencia mas comun de escaneo
 
 
+            QList <double> channelList;
+
+            // verlo primero por bloque y luego por individuo...
+            // iterar por bloque
+            for (int i=0; i<11;i++)
+            {
+                // iterar por individuo
+                for (int j=0; j<numberOfIndividuals;j++)
+                {
+                    // obtener el canal de cada individuo
+                    channelList.append(selectedCell->getIndividual(j)->getParameter((i*4)));
+                }
+                // operar sobre channelList
+
+
+
+            }
+
+            // ----------------------------------------------------------------
         }
 
     }
