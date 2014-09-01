@@ -256,11 +256,18 @@ void Individual::calculateDiscoveryValue()
 
     double api = 0;
     double discovery = 0;
+    double probOfAtLeastOneAP = 0;
+    double factor = 0;
 
     for (int i=0; i<11; i++)
     {
         api = parametersList.at((i*4)+3);
-        discovery = discovery + api;
+
+        probOfAtLeastOneAP = probabilityExistAtLeastOneAp(i+1);
+
+        factor = probOfAtLeastOneAP / (i+1);
+
+        discovery = discovery + api + probOfAtLeastOneAP;
     }
     performanceDiscovery = discovery;
 }
@@ -456,8 +463,6 @@ double Individual::probabilityDelayLessThanMinCT(double delay)
 
     return probability;
 }
-
-
 
 
 

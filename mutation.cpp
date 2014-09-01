@@ -406,6 +406,12 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
         else // la celda tiene dos o mas individuos
         {
             qDebug("   la celda tiene dos o mas individuos");
+            for (int i=0; i<selectedCell->getCount();i++)
+            {
+                selectedCell->getIndividual(i)->printIndividual();
+            }
+            qDebug("----------------------------------------------------------------");
+
             // TODO
             QMessageBox msg;
             msg.setText("*** MUTACION DIRIGIDA***\nLa celda tiene dos o mas individuos!!!\TODO!");
@@ -417,15 +423,15 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             // primera etapa de la mutacion dirigida
 
             // TODO: establecer el umbral como un parametro
-            double stdDevThreshold = 0.3;
+            double stdDevThreshold = 0.1;
 
             int numberOfIndividuals = selectedCell->getCount();
 
             Individual * preOffspring = new Individual(10);
 
-            qDebug("-----");
+            qDebug("-----preoffspring------");
             preOffspring->printIndividual();
-            qDebug("-----");
+            qDebug("-----------------------");
 
             QList<double> minList;
             QList<double> maxList;
@@ -439,6 +445,8 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
                 // iterar por individuo
                 for (int j=0; j<numberOfIndividuals;j++)
                 {
+
+                    //selectedCell->getIndividual(j)->printIndividual();
                     // obtener los min y max y agregarlos en las listas respectivas
                     minList.append(selectedCell->getIndividual(j)->getParameter((i*4)+1));
                     maxList.append(selectedCell->getIndividual(j)->getParameter((i*4)+2));
@@ -466,11 +474,11 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
                 else
                 {
                     // asignar el valor mutado del parametro del padre
-                    preOffspring->setParameter(((i*4)+1),father->getParameter((i*4)+2));
+                    preOffspring->setParameter(((i*4)+2),father->getParameter((i*4)+2));
                 }
                 meanAndStdDevHash.clear();
             }
-            qDebug("-----");
+            qDebug("--MIN y MAX MUTADOS---");
             preOffspring->printIndividual();
             qDebug("-----");
 
@@ -480,7 +488,10 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             // identificar la secuencia mas comun de escaneo
 
 
-            QList <double> channelList;
+            QList <int> channelList;
+
+            QList<int> patternSequence;
+            int newChannel = 0;
 
             // verlo primero por bloque y luego por individuo...
             // iterar por bloque
@@ -490,44 +501,105 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
                 for (int j=0; j<numberOfIndividuals;j++)
                 {
                     // obtener el canal de cada individuo
+                    //selectedCell->getIndividual(j)->printIndividual();
                     channelList.append(selectedCell->getIndividual(j)->getParameter((i*4)));
                 }
                 // operar sobre channelList
-
-
-
+                newChannel = getPatternSequence(channelList);
+                //qDebug("canal %d del patron: %d",i+1, newChannel);
+                channelList.clear();
+                patternSequence.append(newChannel);
             }
 
+            qDebug("PATRON DE SECUENCIA: --------------------");
+            QString seq;
+            for (int i=0;i<patternSequence.count();i++)
+            {
+                seq.append(QString::number(patternSequence.at(i)));
+                seq.append("-");
+            }
+            qDebug(qPrintable(seq));
+            qDebug("------------------------------------------");
+
+            QList<int> finalSequence;
+
+            QHash<int,bool> usedChannels;
+            for (int i=1;i<=11;i++)
+            {
+                usedChannels.insert(i,false);
+            }
+
+
+            for (int i=0; i<patternSequence.count();i++)
+            {
+                if (usedChannels.value(patternSequence.at(i)))
+                {
+                    finalSequence.append(0);
+                }
+                else
+                {
+                    usedChannels.insert(patternSequence.at(i),true);
+                    finalSequence.append(patternSequence.at(i));
+                }
+
+            }
+            qDebug("Secuencia final con ceros:");
+            QString seq2;
+            for (int i=0;i<finalSequence.count();i++)
+            {
+                seq2.append(QString::number(finalSequence.at(i)));
+                seq2.append("-");
+            }
+            qDebug(qPrintable(seq2));
+            qDebug("------------------------------------------");
+
+            for (int i=0;i<finalSequence.count();i++)
+            {
+                if (finalSequence.at(i) == 0)
+                {
+                    for (int j=0;j<usedChannels.count();j++)
+                    {
+                        if (usedChannels.value(j+1) == false)
+                        {
+                            finalSequence.replace(i,j+1);
+                            usedChannels.insert(j+1,true);
+                            break;
+                        }
+                    }
+                }
+            }
+            qDebug("Secuencia final despues de quitar repetidos:");
+            QString seq3;
+            for (int i=0;i<finalSequence.count();i++)
+            {
+                seq3.append(QString::number(finalSequence.at(i)));
+                seq3.append("-");
+            }
+            qDebug(qPrintable(seq3));
+            qDebug("------------------------------------------");
+
+
+            for (int i=0; i<11; i++)
+            {
+                preOffspring->setParameter(i*4,finalSequence.at(i));
+            }
+            qDebug("*******************OFFSPRING*******************************");
+            preOffspring->printIndividual();
+            qDebug("***********************************************************");
+
             // ----------------------------------------------------------------
+
+            // TODO: agregar el offspring a newPopulation
+            // agregar el individuo padre y el individuo hijo a la lista newPopulation
+            // newPopulation sera de tamano 2p
+            newPopulation.append(father);
+            newPopulation.append(preOffspring);
         }
+
 
     }
 
 
-
-    //Marcar las celdas que tengan la misma cantidad de individuos.
-
-    // Si hay dos o más celdas con menor cantidad de individuos entonces
-    //    verificar si las dos celdas son no vecinas entonces
-    //        seleccionar una celda aleatoria
-    //    en caso contrario // las celdas son vecinas
-    //        tomar la celda siguiente no vecina con igual número de individuos
-    //        o tomar la siguiente celda con más número de individuos de la lista
-
-    // Si hay una sola celda con menor cantidad de individuos entonces
-    //    Escoger la celda que tenga menor cantidad de individuos
-    //    Si la celda tiene un solo individuo entonces
-    //        Escoger el individuo como patron para la mutación
-
-    // en caso contrario // la celda tiene dos o más individuos
-
-
-
-
-
-
-
-    // TODO: agregar el offspring a newPopulation
 
 }
 
@@ -593,14 +665,97 @@ QHash<QString, double> Mutation::calculateMeanAndStdDev(QList<double> minChannel
     hash.insert("stdDevMaxChannelTime", stdDevMaxChannelTime);
 
 
-    qDebug("meanMin: %f, stdDevMin: %f, meanMax: %f, sdtDevMax: %f",
-           hash.value("meanMinChannelTime"), hash.value("stdDevMinChannelTime"),
-           hash.value("meanMaxChannelTime"), hash.value("stdDevMaxChannelTime"));
+    //qDebug("meanMin: %f, stdDevMin: %f, meanMax: %f, sdtDevMax: %f",
+    //       hash.value("meanMinChannelTime"), hash.value("stdDevMinChannelTime"),
+    //       hash.value("meanMaxChannelTime"), hash.value("stdDevMaxChannelTime"));
 
     return hash;
 }
 
 
+int Mutation::getPatternSequence(QList<int> channelList)
+{
+
+
+    QHash<int, int> channelMap;
+    for (int i=1;i<=11;i++)
+    {
+        channelMap.insert(i,0);
+    }
+
+
+
+    int readChannel = 0;
+    for (int i=0; i<channelList.count();i++)
+    {
+        readChannel = channelList.at(i);
+        if (readChannel == 1)
+        {
+            channelMap.insert(1,channelMap.value(1)+1);
+        }
+        else if (readChannel == 2) {
+          channelMap.insert(2,channelMap.value(2)+1);
+        }
+        else if (readChannel == 3) {
+          channelMap.insert(3,channelMap.value(3)+1);
+        }
+        else if (readChannel == 4) {
+          channelMap.insert(4,channelMap.value(4)+1);
+        }
+        else if (readChannel == 5) {
+          channelMap.insert(5,channelMap.value(5)+1);
+        }
+        else if (readChannel == 6) {
+          channelMap.insert(6,channelMap.value(6)+1);
+        }
+        else if (readChannel == 7) {
+          channelMap.insert(7,channelMap.value(7)+1);
+        }
+        else if (readChannel == 8) {
+          channelMap.insert(8,channelMap.value(8)+1);
+        }
+        else if (readChannel == 9) {
+          channelMap.insert(9,channelMap.value(9)+1);
+        }
+        else if (readChannel == 10) {
+          channelMap.insert(10,channelMap.value(10)+1);
+        }
+        else if (readChannel == 11) {
+          channelMap.insert(11,channelMap.value(11)+1);
+        }
+    }
+
+    QList<int> repeated;
+    int indexMax = 0;
+
+    int channelToReturn = 0;
+
+    for (int i=1; i<=11;i++)
+    {
+        if (i==1)
+        {
+           indexMax = i;
+           repeated.append(i);
+           continue;
+        }
+        if (channelMap.value(i) >= channelMap.value(indexMax))
+        {
+            indexMax = i;
+        }
+    }
+    channelToReturn = indexMax;
+
+    if (channelMap.value(channelToReturn) >= channelList.count()/2)
+    {
+        return channelToReturn;
+    }
+    else
+    {
+        return 0;
+    }
+
+
+}
 
 
 

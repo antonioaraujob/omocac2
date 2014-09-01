@@ -194,6 +194,7 @@ public:
     QHash<QString, double> calculateMeanAndStdDev(QList<double> minChannelTimeList, QList<double> maxChannelTimeList, int genIndex);
 
 
+    int getPatternSequence(QList<int> channelList);
 
 };
 
