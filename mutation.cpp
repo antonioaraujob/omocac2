@@ -415,7 +415,7 @@ void Mutation::directedMutation(NormativeGrid *grid, Individual *father)
             // TODO
             QMessageBox msg;
             msg.setText("*** MUTACION DIRIGIDA***\nLa celda tiene dos o mas individuos!!!\TODO!");
-            msg.exec();
+            //msg.exec();
 
 
 

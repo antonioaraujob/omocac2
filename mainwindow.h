@@ -25,6 +25,19 @@ private:
      */
     Simulation * simulation;
 
+
+    /**
+     * @brief Lista de soluciones no dominadas resultantes de la ejecucion del algoritmo cultural original
+     */
+    QList<Individual *> genericAlgorithmSolutions;
+
+    /**
+     * @brief Lista de soluciones no dominadas resultantes de la ejecucion del algoritmo cultural modificado
+     *
+     * En la modificacion se esta utilizando
+     */
+    QList<Individual *> modificatedAlgorithmSolutions;
+
 public:
 
     /**
@@ -60,6 +73,12 @@ public:
      */
     bool validateFields();
 
+    void newSetupCustomPlot(QCustomPlot *customPlot);
+
+    void setupCustomPlot2(QCustomPlot *customPlot);
+
+    void plotSolutions();
+
 public slots:
 
     /**
@@ -81,6 +100,21 @@ public slots:
      * @param str
      */
     void checkPopulationSize(const QString & str);
+
+    /**
+     * @brief Slot para habilitar el boton de comparacion de los algoritmos genericos y modificado
+     * @param state
+     */
+    void activateComparationButton(int state);
+
+    /**
+     * @brief Slot para ejecutar el algoritmo PSO modificado al presionar un boton en la
+     * interfaz grafica
+     */
+    void compareAlgorithms();
+
+
+
 
 private:
     Ui::MainWindow *ui;

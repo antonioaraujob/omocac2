@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setFixedSize(835, 683);
+    this->setFixedSize(835, 751);
 
     // Validadores para los parametros del algoritmo
     QValidator * validatorPopSize = new QIntValidator(1, 1000, this);
@@ -64,6 +64,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pushButtonRun, SIGNAL(clicked()), this, SLOT(executeAlgorithm()));
 
+    connect(ui->pushButtonCompareAlgorithms, SIGNAL(clicked()), this, SLOT(compareAlgorithms()));
+
     connect(ui->checkBoxDirectedMutation, SIGNAL(stateChanged(int)), this, SLOT(activateDirectedMutation(int)));
     ui->labelDirectedMutation->setEnabled(false);
     ui->lineEditDirectedMutation->setEnabled(false);
@@ -71,6 +73,18 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->lineEditPopulationSize, SIGNAL(textChanged(const QString & )), this, SLOT(checkPopulationSize(const QString &)));
 
 
+    connect(ui->checkBoxComparation, SIGNAL(stateChanged(int)), this, SLOT(activateComparationButton(int)));
+    ui->pushButtonCompareAlgorithms->setEnabled(false);
+
+
+    ui->label_AC_generico->setVisible(false);
+    ui->acGenericNumber->setVisible(false);
+    ui->label_AC_modificado->setVisible(false);
+    ui->acModifiedNumber->setVisible(false);
+    ui->acGenericTime->setVisible(false);
+    ui->acModifiedTime->setVisible(false);
+    ui->label_tiempo_generico_2->setVisible(false);
+    ui->label_tiempo_modificado_2->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -234,8 +248,22 @@ void MainWindow::executeAlgorithm()
     // poblar la lista de individuos no dominados del archivo externo
     populateListView();
 
+
+    if (ui->checkBoxDirectedMutation->isChecked())
+    {
+        modificatedAlgorithmSolutions = simulation->getExternalFile()->getExternalFileList();
+    }
+    else
+    {
+        genericAlgorithmSolutions = simulation->getExternalFile()->getExternalFileList();
+    }
+
+
     // generar el grafico
-    setupCustomPlot(ui->customPlot);
+    //setupCustomPlot(ui->customPlot);
+
+    // generar el grafico
+    plotSolutions();
 
 }
 
@@ -354,6 +382,190 @@ void MainWindow::setupCustomPlot(QCustomPlot *customPlot)
 }
 
 
+void MainWindow::newSetupCustomPlot(QCustomPlot *customPlot)
+{
+/*
+    int count = simulation->getGlobalRepository()->getRepositoryList().count();
+    QVector<double> discovery(count), latency(count);
+
+    int i = 0;
+
+    Particle * particle;
+    //for (int z=simulation->getExternalFile()->getExternalFileList().count()-1; z>=0; z-- )
+    for (int z=simulation->getGlobalRepository()->getRepositoryList().count()-1; z>=0; z-- )
+    {
+        particle = simulation->getGlobalRepository()->getRepositoryList().at(z);
+        discovery[i] = particle->getPerformanceDiscovery();
+        latency[i] = particle->getPerformanceLatency();
+        i++;
+    }
+*/
+
+    //customPlot->setLocale(QLocale(QLocale::English, QLocale::UnitedKingdom)); // period as decimal separator and comma as thousand separator
+    customPlot->legend->setVisible(true);
+    QFont legendFont = font();  // start out with MainWindow's font..
+    legendFont.setPointSize(9); // and make a bit smaller for legend
+    customPlot->legend->setFont(legendFont);
+    customPlot->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+    customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+
+
+    customPlot->clearGraphs();
+
+    Individual * individual;
+    int count = genericAlgorithmSolutions.count();
+    QVector<double> discovery(count), latency(count);
+    for (int i = 0; i < count; i++)
+    {
+        individual = genericAlgorithmSolutions.at(i);
+        discovery[i] = individual->getPerformanceDiscovery();
+        latency[i] = individual->getPerformanceLatency();
+    }
+
+
+    int countModified = modificatedAlgorithmSolutions.count();
+    QVector<double> discoveryModified(countModified), latencyModified(countModified);
+    if (ui->checkBoxDirectedMutation->isChecked())
+    {
+        for (int i = 0; i < countModified; i++)
+        {
+            individual = modificatedAlgorithmSolutions.at(i);
+            discoveryModified[i] = individual->getPerformanceDiscovery();
+            latencyModified[i] = individual->getPerformanceLatency();
+        }
+    }
+
+    // create graph and assign data to it:
+    customPlot->addGraph();
+
+    customPlot->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
+
+    if (ui->checkBoxDirectedMutation->isChecked())
+    {
+        customPlot->graph(0)->setName("AC modificado");
+        customPlot->graph(0)->setData(discoveryModified, latencyModified);
+    }
+    else
+    {
+        customPlot->graph(0)->setName("AC original");
+        customPlot->graph(0)->setData(discovery, latency);
+    }
+
+    customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
+    customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
+
+
+    if (ui->checkBoxComparation->isChecked())
+    //if (modified)
+    {
+        customPlot->addGraph();
+        customPlot->graph(1)->setPen(QPen(Qt::green)); // line color green for second graph
+        customPlot->graph(1)->setData(discoveryModified, latencyModified);
+        customPlot->graph(1)->setLineStyle(QCPGraph::lsLine);
+        customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::yellow, 4));
+    }
+
+    // give the axes some labels:
+    customPlot->xAxis->setLabel("Descubierta");
+    customPlot->yAxis->setLabel("Latencia");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0, 75);
+    customPlot->yAxis->setRange(0, 300);
+
+    customPlot->yAxis->grid()->setSubGridVisible(true);
+
+    ui->customPlot->replot();
+
+}
+
+
+void MainWindow::setupCustomPlot2(QCustomPlot *customPlot)
+{
+/*
+    int count = simulation->getGlobalRepository()->getRepositoryList().count();
+    QVector<double> discovery(count), latency(count);
+
+    int i = 0;
+
+    Particle * particle;
+    //for (int z=simulation->getExternalFile()->getExternalFileList().count()-1; z>=0; z-- )
+    for (int z=simulation->getGlobalRepository()->getRepositoryList().count()-1; z>=0; z-- )
+    {
+        particle = simulation->getGlobalRepository()->getRepositoryList().at(z);
+        discovery[i] = particle->getPerformanceDiscovery();
+        latency[i] = particle->getPerformanceLatency();
+        i++;
+    }
+*/
+
+    customPlot->legend->setVisible(true);
+    QFont legendFont = font();  // start out with MainWindow's font..
+    legendFont.setPointSize(9); // and make a bit smaller for legend
+    customPlot->legend->setFont(legendFont);
+    customPlot->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+    customPlot->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+
+    customPlot->clearGraphs();
+
+
+    Individual * individual;
+    int count = genericAlgorithmSolutions.count();
+    QVector<double> discovery(count), latency(count);
+    for (int i = 0; i < count; i++)
+    {
+        individual = genericAlgorithmSolutions.at(i);
+        discovery[i] = individual->getPerformanceDiscovery();
+        latency[i] = individual->getPerformanceLatency();
+    }
+
+
+    int countModified = modificatedAlgorithmSolutions.count();
+    QVector<double> discoveryModified(countModified), latencyModified(countModified);
+    //if (ui->checkBoxComparation->isChecked())
+    //if (comparation)
+    //{
+        for (int i = 0; i < countModified; i++)
+        {
+            individual = modificatedAlgorithmSolutions.at(i);
+            discoveryModified[i] = individual->getPerformanceDiscovery();
+            latencyModified[i] = individual->getPerformanceLatency();
+        }
+    //}
+
+    // create graph and assign data to it:
+    customPlot->addGraph();
+    customPlot->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
+    customPlot->graph(0)->setData(discovery, latency);
+    customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
+    customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
+    customPlot->graph(0)->setName("AC original");
+
+    customPlot->addGraph();
+    customPlot->graph(1)->setPen(QPen(Qt::green)); // line color green for second graph
+    customPlot->graph(1)->setData(discoveryModified, latencyModified);
+    customPlot->graph(1)->setLineStyle(QCPGraph::lsLine);
+    customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
+    customPlot->graph(1)->setName("AC modificado");
+
+    // give the axes some labels:
+    customPlot->xAxis->setLabel("Descubierta");
+    customPlot->yAxis->setLabel("Latencia");
+    // set axes ranges, so we see all data:
+    customPlot->xAxis->setRange(0, 75);
+    customPlot->yAxis->setRange(0, 300);
+
+    customPlot->yAxis->grid()->setSubGridVisible(true);
+
+
+
+    ui->customPlot->replot();
+
+    // show legend:
+    //customPlot->legend->setVisible(true);
+}
+
 bool MainWindow::validateFields()
 {
     bool validate = true;
@@ -440,7 +652,102 @@ void MainWindow::checkPopulationSize(const QString & str)
 
 
 
+void MainWindow::activateComparationButton(int state)
+{
 
+    if (state == 0)
+    {
+        ui->pushButtonCompareAlgorithms->setEnabled(false);
+
+        ui->pushButtonRun->setEnabled(true);
+
+
+
+        ui->labelExternalFile->setVisible(true);
+        ui->labelNonDominatedNUmber->setVisible(true);
+        ui->listViewBestIndividuals->setVisible(true);
+
+
+        ui->label_AC_generico->setVisible(false);
+        ui->acGenericNumber->setVisible(false);
+        ui->label_AC_modificado->setVisible(false);
+        ui->acModifiedNumber->setVisible(false);
+
+        ui->acGenericTime->setVisible(false);
+        ui->acModifiedTime->setVisible(false);
+        ui->label_tiempo_generico_2->setVisible(false);
+        ui->label_tiempo_modificado_2->setVisible(false);
+
+    }
+    else if(state == 2)
+    {
+        ui->pushButtonCompareAlgorithms->setEnabled(true);
+
+        ui->pushButtonRun->setEnabled(false);
+
+        ui->labelExternalFile->setVisible(false);
+        ui->labelNonDominatedNUmber->setVisible(false);
+        ui->listViewBestIndividuals->setVisible(false);
+
+
+        ui->label_AC_generico->setVisible(true);
+        ui->acGenericNumber->setVisible(true);
+        ui->label_AC_modificado->setVisible(true);
+        ui->acModifiedNumber->setVisible(true);
+
+        ui->acGenericTime->setVisible(true);
+        ui->acModifiedTime->setVisible(true);
+
+        ui->label_tiempo_generico_2->setVisible(true);
+        ui->label_tiempo_modificado_2->setVisible(true);
+
+    }
+
+}
+
+void MainWindow::compareAlgorithms()
+{
+
+    ui->checkBoxDirectedMutation->setChecked(false);
+
+    QTime timer;
+    timer.start();
+
+    executeAlgorithm();
+
+    int runtimeGeneric = timer.elapsed(); //gets the runtime in ms
+    ui->acGenericTime->setText(QString::number(runtimeGeneric)+" ms");
+
+
+
+    QMessageBox msg;
+    msg.setText("Termino el algoritmo generico");
+    //msg.exec();
+
+    ui->checkBoxDirectedMutation->setChecked(true);
+
+
+    timer.start();
+    executeAlgorithm();
+    int runtimeModified = timer.elapsed(); //gets the runtime in ms
+    ui->acModifiedTime->setText(QString::number(runtimeModified)+" ms");
+
+    //ui->checkBoxGrid->setChecked(false);
+    ui->checkBoxDirectedMutation->setChecked(false);
+
+    msg.setText("Termino el algoritmo modificado");
+    //msg.exec();
+
+
+    setupCustomPlot2(ui->customPlot);
+
+
+    ui->acGenericNumber->setText(QString::number(genericAlgorithmSolutions.count()));
+    ui->acModifiedNumber->setText(QString::number(modificatedAlgorithmSolutions.count()));
+
+
+
+}
 
 
 
@@ -469,3 +776,11 @@ void MainWindow::checkPopulationSize(const QString & str)
     qDebug("secuencia de scanning:");
     qDebug(qPrintable(seq));
 */
+
+void MainWindow::plotSolutions()
+{
+    if (!ui->checkBoxComparation->isChecked())
+    {
+        newSetupCustomPlot(ui->customPlot);
+    }
+}
