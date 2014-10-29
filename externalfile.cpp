@@ -52,6 +52,7 @@ void ExternalFile::addNonDominatedIndividuals(Individual * ind)
     externalFileNonDominatedList.append(ind);
 }
 
+/*
 void ExternalFile::addNonDominatedIndividuals(QList<Individual *> nonDominatedListToInsert, NormativeGrid *nGrid)
 {
     qDebug("ExternalFile::addNonDominatedIndividuals(QList<Individual *> nonDominatedListToInsert, NormativeGrid *nGrid)");
@@ -119,6 +120,73 @@ void ExternalFile::addNonDominatedIndividuals(QList<Individual *> nonDominatedLi
                 // individuo anterior con el nuevo.
                 checkGridCellAndInsertIndividual(newIndividual, nGrid);
 
+            }
+        }
+    }
+    Individual * ind;
+    qDebug("INDIVIDUOS Del archivo externo-------");
+    for (int i = 0; i < externalFileNonDominatedList.count(); i++)
+    {
+        ind = externalFileNonDominatedList.at(i);
+        ind->printIndividual();
+    }
+    qDebug("-------");
+}
+*/
+
+void ExternalFile::addNonDominatedIndividuals(QList<Individual *> nonDominatedListToInsert, NormativeGrid *nGrid)
+{
+    qDebug("ExternalFile::addNonDominatedIndividuals(QList<Individual *> nonDominatedListToInsert, NormativeGrid *nGrid)");
+
+    Individual * newIndividual;
+
+    int indexToReplaceIndividual = 0;
+
+    //Individual * recentIndividual;
+
+    // verificar las condiciones para agregar
+
+    for (int i = 0; i < nonDominatedListToInsert.count(); i++)
+    {
+        newIndividual = nonDominatedListToInsert.at(i);
+        newIndividual->printIndividual();
+
+        // verificar si newIndividual ya existe en el archivo externo
+        if (isIndividualInExternalFile(newIndividual))
+        {
+            continue;
+        }
+
+
+        // 1) Si el individuo que se pretende agregar es dominado por algun individuo
+        // del archivo externo, entonces el individuo no se debe agregar
+        if ( !isNewIndividualDominatedByExternalFile(newIndividual) )
+        {
+
+            // 2) Si newIndividual domina a algun individuo en el archivo externo, entonces
+            // se introduce en su lugar, pero continua comparandose contra todos los demas.
+            // Si el mismo individuo, ya agregado, dominara a algun otro, este (el dominado)
+            // es eliminado del archivo externo
+            if (newIndividualDominatesAnyoneInExternalFile(newIndividual, indexToReplaceIndividual))
+            {
+                addNewIndividualAndCheck(newIndividual, indexToReplaceIndividual);
+            }
+            // 3) si newIndividual no es dominado ni domina a nadie en el archivo externo y
+            // el tamano del archivo es menor que q entonces agregarlo
+            else if (externalFileNonDominatedList.count() < maxExternalFileSize)
+            {
+                externalFileNonDominatedList.append(newIndividual);
+
+                // agregar el individuo nuevo en la lista de individuos de la generacion
+                currentGenerationIndividualList.append(newIndividual);
+            }
+            else
+            {
+                // 4) el tamano del archivo es mayor que q entonces se busca algun individuo
+                // del archivo externo cuya celda contenga mas individuos que la celda a la
+                // que pertenece el individuo que se pretende agregar, y se reemplaza el
+                // individuo anterior con el nuevo.
+                checkGridCellAndInsertIndividual(newIndividual, nGrid);
             }
         }
     }
