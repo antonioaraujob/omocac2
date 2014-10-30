@@ -369,19 +369,25 @@ void ExternalFile::addNewIndividualAndCheck(Individual * newIndividual, int inde
         nonDominatedindividual = externalFileNonDominatedList.at(i);
         if (individualDominate(newIndividual, nonDominatedindividual))
         {
-            //externalFileNonDominatedList.removeAt(i);
-            markedToRemove.append(i);
+            markedToRemove.append(nonDominatedindividual->getIndividualId());
             qDebug("marcado individuo duplicado con indice %d", i);
         }
         i++;
     }
 
     // eliminar los individuos marcados del archivo externo
-    for (int j = 0; j < markedToRemove.count(); j++)
+    for (int j=0; j<markedToRemove.count(); j++)
     {
-        externalFileNonDominatedList.removeAt(j);
-
+        for (int k=0; k<externalFileNonDominatedList.count(); k++)
+        {
+            if (externalFileNonDominatedList.at(k)->getIndividualId() == markedToRemove.at(j))
+            {
+                externalFileNonDominatedList.removeAt(k);
+                break;
+            }
+        }
     }
+
 }
 
 
