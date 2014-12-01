@@ -38,6 +38,9 @@ private:
      */
     QList<Individual *> modificatedAlgorithmSolutions;
 
+
+    QList< QList<Individual *> > repeatedSolutionList;
+
 public:
 
     /**
@@ -79,6 +82,9 @@ public:
 
     void plotSolutions();
 
+
+    void storeExecutionSolution();
+
 public slots:
 
     /**
@@ -114,6 +120,10 @@ public slots:
     void compareAlgorithms();
 
 
+
+    void repeatAlgorithm();
+
+    void view();
 
 
 private:

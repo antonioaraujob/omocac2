@@ -18,7 +18,7 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    this->setFixedSize(835, 751);
+    this->setFixedSize(880, 813);
 
     // Validadores para los parametros del algoritmo
     QValidator * validatorPopSize = new QIntValidator(1, 1000, this);
@@ -75,6 +75,10 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->checkBoxComparation, SIGNAL(stateChanged(int)), this, SLOT(activateComparationButton(int)));
     ui->pushButtonCompareAlgorithms->setEnabled(false);
+
+
+    connect(ui->pushButtonRepeatAlgoritm, SIGNAL(clicked()), this, SLOT(repeatAlgorithm()));
+    connect(ui->pushButtonView, SIGNAL(clicked()), this, SLOT(view()));
 
 
     ui->label_AC_generico->setVisible(false);
@@ -265,6 +269,10 @@ void MainWindow::executeAlgorithm()
     // generar el grafico
     plotSolutions();
 
+
+    //storeExecutionSolution();
+
+    qDebug("antes de salir executeAlgorithm");
 }
 
 
@@ -784,3 +792,222 @@ void MainWindow::plotSolutions()
         newSetupCustomPlot(ui->customPlot);
     }
 }
+
+
+void MainWindow::repeatAlgorithm()
+{
+    qDebug("MainWindow::repeatAlgorithm()");
+
+    QTime timer;
+    QList<int> executionTimeList;
+
+    for (int i=0; i<30; i++)
+    {
+        timer.start();
+        executeAlgorithm();
+        executionTimeList.append(timer.elapsed());
+
+        if (ui->checkBoxDirectedMutation->isChecked())
+        { // mutacion dirigida
+            QList<Individual*> list(modificatedAlgorithmSolutions);
+            repeatedSolutionList.append(list);
+        }
+        else // mutacion generica
+        {
+            QList<Individual*> list(genericAlgorithmSolutions);
+            repeatedSolutionList.append(list);
+        }
+
+        //repeatedSolutionList.append(list);
+    }
+
+    qDebug("mira la lista");
+
+    qDebug("tamano de la lista de repeticiones: ");
+    qDebug(qPrintable(QString::number(repeatedSolutionList.count())));
+
+    qDebug("valor del primer individuo de la lista");
+    qDebug(qPrintable(QString::number(repeatedSolutionList[0].at(0)->getIndividualId())));
+
+
+    qDebug("Promedio del tiempo de ejecucion ");
+
+    int time = 0;
+    for (int j=0; j<executionTimeList.count(); j++)
+    {
+        time = time + executionTimeList.at(j);
+    }
+    double mean = time/executionTimeList.count();
+    qDebug(qPrintable(QString::number(mean)+" ms"));
+
+    qDebug("Promedio de numero de individuos no dominados por ejecucion");
+
+    int totalIndividuals = 0;
+    for (int j=0; j<executionTimeList.count(); j++)
+    {
+        totalIndividuals = totalIndividuals + repeatedSolutionList.at(j).count();
+    }
+    double individualMean = totalIndividuals/repeatedSolutionList.count();
+    qDebug(qPrintable(QString::number(individualMean)+" individuos"));
+
+}
+
+
+void MainWindow::storeExecutionSolution()
+{
+    Individual * individual;
+    Individual * auxIndividual;
+    int count = genericAlgorithmSolutions.count();
+
+    QList<Individual*> list;
+
+    for (int i = 0; i < count; i++)
+    {
+        auxIndividual = genericAlgorithmSolutions.at(i);
+        individual = new Individual(*auxIndividual);
+        list.append(individual);
+    }
+
+    repeatedSolutionList.append(list);
+}
+
+void MainWindow::view()
+{
+
+    qDebug("MainWindow::view()");
+    qDebug("tamano de la lista de repeticiones: ");
+    qDebug(qPrintable(QString::number(repeatedSolutionList.count())));
+
+    for (int i=0; i<repeatedSolutionList.count(); i++)
+    {
+        qDebug("tamano de la lista de individuos no dominados: ");
+        qDebug(qPrintable(QString::number(repeatedSolutionList[i].count())));
+    }
+
+
+
+    ui->customPlotExecutions->legend->setVisible(true);
+    QFont legendFont = font();  // start out with MainWindow's font..
+    legendFont.setPointSize(9); // and make a bit smaller for legend
+    ui->customPlotExecutions->legend->setFont(legendFont);
+    ui->customPlotExecutions->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+    ui->customPlotExecutions->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+
+    ui->customPlotExecutions->clearGraphs();
+
+
+    Individual * individual;
+
+    QList<Individual *> list1 = repeatedSolutionList.at(0);
+
+    int count = list1.count();
+    qDebug(qPrintable(QString::number(count)));
+
+    QVector<double> discovery(count), latency(count);
+    for (int i = 0; i < count; i++)
+    {
+        individual = list1.at(i);
+        discovery[i] = individual->getPerformanceDiscovery();
+        latency[i] = individual->getPerformanceLatency();
+    }
+
+
+    QList<Individual *> list2 = repeatedSolutionList.at(1);
+
+    int countModified = list2.count();
+    qDebug(qPrintable(QString::number(countModified)));
+
+    QVector<double> discoveryModified(countModified), latencyModified(countModified);
+
+    for (int i = 0; i < countModified; i++)
+    {
+        individual = list2.at(i);
+        discoveryModified[i] = individual->getPerformanceDiscovery();
+        latencyModified[i] = individual->getPerformanceLatency();
+    }
+
+    QList<Individual *> list3 = repeatedSolutionList.at(2);
+
+    int count2 = list3.count();
+    qDebug(qPrintable(QString::number(count2)));
+
+    QVector<double> discovery3(count2), latency3(count2);
+
+    for (int i = 0; i < count2; i++)
+    {
+        individual = list3.at(i);
+        discovery3[i] = individual->getPerformanceDiscovery();
+        latency3[i] = individual->getPerformanceLatency();
+    }
+
+    QList<Individual *> list4 = repeatedSolutionList.at(3);
+
+    int count4 = list4.count();
+    qDebug(qPrintable(QString::number(count4)));
+
+    QVector<double> discovery4(count4), latency4(count4);
+
+    for (int i = 0; i < count4; i++)
+    {
+        individual = list4.at(i);
+        discovery4[i] = individual->getPerformanceDiscovery();
+        latency4[i] = individual->getPerformanceLatency();
+    }
+
+
+
+    // create graph and assign data to it:
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
+    ui->customPlotExecutions->graph(0)->setData(discovery, latency);
+    ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
+    ui->customPlotExecutions->graph(0)->setName("Ejecucion 1");
+
+
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(1)->setPen(QPen(Qt::green)); // line color green for second graph
+    ui->customPlotExecutions->graph(1)->setData(discoveryModified, latencyModified);
+    ui->customPlotExecutions->graph(1)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
+    ui->customPlotExecutions->graph(1)->setName("Ejecucion 2");
+
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(2)->setPen(QPen(Qt::yellow)); // line color green for second graph
+    ui->customPlotExecutions->graph(2)->setData(discovery3, latency3);
+    ui->customPlotExecutions->graph(2)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(2)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
+    ui->customPlotExecutions->graph(2)->setName("Ejecucion 3");
+
+
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(3)->setPen(QPen(Qt::magenta)); // line color green for second graph
+    ui->customPlotExecutions->graph(3)->setData(discovery4, latency4);
+    ui->customPlotExecutions->graph(3)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
+    ui->customPlotExecutions->graph(3)->setName("Ejecucion 4");
+
+
+    // give the axes some labels:
+    ui->customPlotExecutions->xAxis->setLabel("Descubierta");
+    ui->customPlotExecutions->yAxis->setLabel("Latencia");
+    // set axes ranges, so we see all data:
+    ui->customPlotExecutions->xAxis->setRange(0, 75);
+    ui->customPlotExecutions->yAxis->setRange(0, 300);
+
+    ui->customPlotExecutions->yAxis->grid()->setSubGridVisible(true);
+
+
+
+    ui->customPlotExecutions->replot();
+
+
+    repeatedSolutionList.clear();
+
+
+}
+
+
+
+

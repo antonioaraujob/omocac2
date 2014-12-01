@@ -81,14 +81,19 @@ Individual::Individual(Individual &p)
         parametersList.append(p.getParameter(i));
     }
 
+    individualId = p.getIndividualId();
+    wonMatchesCounter = p.getWonMatchesCounter();
+
     // calcular el valor de desempeno para el individuo
     calculatePerformanceValue();
 
     // calcular el valor de desempeno para la descubierta
-    setPerformanceDiscovery(getRandomMaxChannelTime());
+    //setPerformanceDiscovery(getRandomMaxChannelTime());
+    calculateDiscoveryValue();
 
     // calcular el valor de desempeno para la latencia
-    setPerformanceLatency(getRandomMaxChannelTime());
+    //setPerformanceLatency(getRandomMaxChannelTime());
+    calculateLatencyValue();
 }
 
 int Individual::getIndividualId()
