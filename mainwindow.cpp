@@ -955,6 +955,19 @@ void MainWindow::view()
         latency4[i] = individual->getPerformanceLatency();
     }
 
+    QList<Individual *> list5 = repeatedSolutionList.at(4);
+
+    int count5 = list5.count();
+    qDebug(qPrintable(QString::number(count5)));
+
+    QVector<double> discovery5(count5), latency5(count5);
+
+    for (int i = 0; i < count5; i++)
+    {
+        individual = list5.at(i);
+        discovery5[i] = individual->getPerformanceDiscovery();
+        latency5[i] = individual->getPerformanceLatency();
+    }
 
 
     // create graph and assign data to it:
@@ -987,6 +1000,13 @@ void MainWindow::view()
     ui->customPlotExecutions->graph(3)->setLineStyle(QCPGraph::lsLine);
     ui->customPlotExecutions->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
     ui->customPlotExecutions->graph(3)->setName("Ejecucion 4");
+
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(4)->setPen(QPen(Qt::cyan)); // line color green for second graph
+    ui->customPlotExecutions->graph(4)->setData(discovery5, latency5);
+    ui->customPlotExecutions->graph(4)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(4)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
+    ui->customPlotExecutions->graph(4)->setName("Ejecucion 5");
 
 
     // give the axes some labels:
