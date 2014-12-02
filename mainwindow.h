@@ -125,6 +125,8 @@ public slots:
 
     void view();
 
+    void viewAll();
+
 
 private:
     Ui::MainWindow *ui;
