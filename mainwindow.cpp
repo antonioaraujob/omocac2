@@ -829,7 +829,7 @@ void MainWindow::repeatAlgorithm()
     qDebug(qPrintable(QString::number(repeatedSolutionList.count())));
 
     qDebug("valor del primer individuo de la lista");
-    qDebug(qPrintable(QString::number(repeatedSolutionList[0].at(0)->getIndividualId())));
+    //qDebug(qPrintable(QString::number(repeatedSolutionList[0].at(0)->getIndividualId())));
 
 
     qDebug("Promedio del tiempo de ejecucion ");
@@ -851,6 +851,40 @@ void MainWindow::repeatAlgorithm()
     }
     double individualMean = totalIndividuals/repeatedSolutionList.count();
     qDebug(qPrintable(QString::number(individualMean)+" individuos"));
+
+/*
+    // calculo del promedio de funciones objetivo
+    QList<Individual *> listOfNonDominated;
+    Individual * individual;
+
+    int counter = getCountOfNonDominatedInRepetitions();
+    double sumOfDiscovery = 0;
+    double sumOfLatency = 0;
+
+    for (int j=0; j<repeatedSolutionList.count(); j++)
+    {
+        listOfNonDominated = repeatedSolutionList.at(j);
+        for (int k=0; k<listOfNonDominated.count(); k++)
+        {
+            individual = listOfNonDominated.at(k);
+            sumOfDiscovery = sumOfDiscovery + individual->getPerformanceDiscovery();
+            sumOfLatency = sumOfLatency + individual->getPerformanceLatency();
+
+        }
+    }
+*/
+
+    double meanF1 = getMeanOfObjectiveFunction();
+    qDebug("Promedio de Fo1: %s", qPrintable(QString::number(meanF1)));
+    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF1,1))));
+
+
+
+    double meanF2 = getMeanOfObjectiveFunction(2);
+    qDebug("Promedio de Fo2: %s", qPrintable(QString::number(meanF2)));
+    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF2,2))));
+
+
 
 }
 
@@ -1058,12 +1092,13 @@ void MainWindow::viewAll()
 
 
     // identificar el número total de individuos de todas las ejecuciones
-    int counter = 0;
+    int counter = getCountOfNonDominatedInRepetitions();
+/*
     for (int x=0; x<repeatedSolutionList.count(); x++)
     {
         counter = counter + repeatedSolutionList.at(x).count();
     }
-
+*/
     qDebug("counter: %s", qPrintable(QString::number(counter)));
 
 
@@ -1082,8 +1117,8 @@ void MainWindow::viewAll()
             latency[pos] = individual->getPerformanceLatency();
             pos++;
 
-            qDebug("tamano del vector discovery: %s", qPrintable(QString::number(discovery.count())));
-            qDebug("tamano del vector latency: %s", qPrintable(QString::number(latency.count())));
+            //qDebug("tamano del vector discovery: %s", qPrintable(QString::number(discovery.count())));
+            //qDebug("tamano del vector latency: %s", qPrintable(QString::number(latency.count())));
         }
     }
 
@@ -1164,9 +1199,10 @@ void MainWindow::viewAll()
 
     // create graph and assign data to it:
     ui->customPlotExecutions->addGraph();
-    //ui->customPlotExecutions->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
+    ui->customPlotExecutions->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
     ui->customPlotExecutions->graph(0)->setData(discovery, latency);
     //ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->customPlotExecutions->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
     ui->customPlotExecutions->graph(0)->setName("Ejecucion 1");
 
@@ -1202,8 +1238,8 @@ void MainWindow::viewAll()
 */
 
     // give the axes some labels:
-    ui->customPlotExecutions->xAxis->setLabel("Descubierta");
-    ui->customPlotExecutions->yAxis->setLabel("Latencia");
+    ui->customPlotExecutions->xAxis->setLabel("Descubierta (#APs)");
+    ui->customPlotExecutions->yAxis->setLabel("Latencia (ms)");
     // set axes ranges, so we see all data:
     ui->customPlotExecutions->xAxis->setRange(0, 75);
     ui->customPlotExecutions->yAxis->setRange(0, 300);
@@ -1222,3 +1258,87 @@ void MainWindow::viewAll()
 
 
 
+int MainWindow::getCountOfNonDominatedInRepetitions()
+{
+    // identificar el número total de individuos de todas las ejecuciones
+    int counter = 0;
+    for (int x=0; x<repeatedSolutionList.count(); x++)
+    {
+        counter = counter + repeatedSolutionList.at(x).count();
+    }
+    return counter;
+}
+
+double MainWindow::getMeanOfObjectiveFunction(int fo)
+{
+    int counter = getCountOfNonDominatedInRepetitions();
+    double sumOfDiscovery = 0;
+    double sumOfLatency = 0;
+
+    QList<Individual *> listOfNonDominated;
+    Individual * individual;
+
+    for (int j=0; j<repeatedSolutionList.count(); j++)
+    {
+        listOfNonDominated = repeatedSolutionList.at(j);
+        for (int k=0; k<listOfNonDominated.count(); k++)
+        {
+            individual = listOfNonDominated.at(k);
+            sumOfDiscovery = sumOfDiscovery + individual->getPerformanceDiscovery();
+            sumOfLatency = sumOfLatency + individual->getPerformanceLatency();
+
+        }
+    }
+
+    if (fo==1)
+    {
+        return sumOfDiscovery/counter;
+    }
+    else if (fo==2)
+    {
+        return sumOfLatency/counter;
+    }
+    else
+    {
+        return 0;
+    }
+
+    //qDebug("Promedio de Fo1: %s", qPrintable(QString::number(sumOfDiscovery/counter)));
+    //qDebug("Promedio de Fo2: %s", qPrintable(QString::number(sumOfLatency/counter)));
+}
+
+double MainWindow::getStandardDeviation(double mean, int fo)
+{
+    double numerator = 0;
+    double denominator = getCountOfNonDominatedInRepetitions();
+
+
+    QList<Individual *> listOfNonDominated;
+    Individual * individual;
+
+    for (int j=0; j<repeatedSolutionList.count(); j++)
+    {
+        listOfNonDominated = repeatedSolutionList.at(j);
+        for (int k=0; k<listOfNonDominated.count(); k++)
+        {
+            individual = listOfNonDominated.at(k);
+
+            if (fo == 1)
+            {
+                numerator = numerator + pow((individual->getPerformanceDiscovery()-mean),2);
+
+            }
+            else if (fo == 2)
+            {
+                numerator = numerator + pow((individual->getPerformanceLatency()-mean),2);
+
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
+    return sqrt(numerator/denominator);
+
+}

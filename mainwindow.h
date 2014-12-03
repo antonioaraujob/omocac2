@@ -85,6 +85,30 @@ public:
 
     void storeExecutionSolution();
 
+    /**
+     * @brief Retorna el numero de individuos no dominados de todas las repeticiones
+     * del algoritmo
+     * @return
+     */
+    int getCountOfNonDominatedInRepetitions();
+
+
+    /**
+     * @brief Retorna el promedio de la funcion objetivo de todos los individuos no dominados
+     * luego de las repeticiones del algoritmo
+     * @param fo identificador de la funcion objetivo: 1 para descubierta, 2 para latencia
+     * @return promedio de la funcion objetivo
+     */
+    double getMeanOfObjectiveFunction(int fo=1);
+
+    /**
+     * @brief retorna la desviacion estandar de la funcion objetivo pasada como argumento
+     * @param mean media de la funcion objetivo seleccionada
+     * @param fo funcion objetivo seleccionada: 1 para descubierta, 2 para latencia
+     * @return desviacion estandar de la funcion objetivo pasada como argumento
+     */
+    double getStandardDeviation(double mean, int fo = 1);
+
 public slots:
 
     /**
