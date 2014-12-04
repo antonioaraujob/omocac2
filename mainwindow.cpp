@@ -79,6 +79,8 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(ui->pushButtonRepeatAlgoritm, SIGNAL(clicked()), this, SLOT(repeatAlgorithm()));
 
+    connect(ui->pushButtonCompareExecutions, SIGNAL(clicked()), this, SLOT(compareAlgorithmRepeated()));
+
     //connect(ui->pushButtonView, SIGNAL(clicked()), this, SLOT(view()));
     connect(ui->pushButtonView, SIGNAL(clicked()), this, SLOT(viewAll()));
 
@@ -1342,3 +1344,158 @@ double MainWindow::getStandardDeviation(double mean, int fo)
     return sqrt(numerator/denominator);
 
 }
+
+
+
+void MainWindow::compareAlgorithmRepeated()
+{
+
+    qDebug("MainWindow::compareAlgorithmRepeated()");
+
+    QTime timer;
+    QList<int> executionTimeList;
+
+
+    // ejecuciones del algoritmo original
+    for (int i=0; i<30; i++)
+    {
+        timer.start();
+        executeAlgorithm();
+        executionTimeList.append(timer.elapsed());
+        QList<Individual*> list(genericAlgorithmSolutions);
+        repeatedOriginalSolutionList.append(list);
+    }
+
+    // ejecuciones del algoritmo modificado
+    ui->checkBoxDirectedMutation->setChecked(true);
+    for (int i=0; i<30; i++)
+    {
+        timer.start();
+        executeAlgorithm();
+        executionTimeList.append(timer.elapsed());
+        QList<Individual*> list(modificatedAlgorithmSolutions);
+        repeatedModificatedSolutionList.append(list);
+    }
+
+    // deseleccionar el check para modificacion
+    ui->checkBoxDirectedMutation->setChecked(false);
+
+
+
+    // llenar el vector original con los valores de las funciones objetivo
+    Individual * individual;
+    QList<Individual *> list1;
+    int originalCounter = getCountOfNonDominatedInOriginalRepetitions();
+
+    QVector<double> discoveryOriginal(originalCounter), latencyOriginal(originalCounter);
+    int pos = 0;
+
+    for (int j=0; j<repeatedOriginalSolutionList.count(); j++)
+    {
+        list1 = repeatedOriginalSolutionList.at(j);
+        for (int k=0; k<list1.count(); k++)
+        {
+            individual = list1.at(k);
+            discoveryOriginal[pos] = individual->getPerformanceDiscovery();
+            latencyOriginal[pos] = individual->getPerformanceLatency();
+            pos++;
+
+            //qDebug("tamano del vector discovery: %s", qPrintable(QString::number(discovery.count())));
+            //qDebug("tamano del vector latency: %s", qPrintable(QString::number(latency.count())));
+        }
+    }
+
+    // llenar el vector modificado con los valores de las funciones objetivo
+    //Individual * individual;
+    QList<Individual *> list2;
+    int modificatedCounter = getCountOfNonDominatedInModificatedRepetitions();
+
+    QVector<double> discoveryModificated(modificatedCounter), latencyModificated(modificatedCounter);
+    pos = 0;
+
+    for (int j=0; j<repeatedModificatedSolutionList.count(); j++)
+    {
+        list2 = repeatedModificatedSolutionList.at(j);
+        for (int k=0; k<list2.count(); k++)
+        {
+            individual = list2.at(k);
+            discoveryModificated[pos] = individual->getPerformanceDiscovery();
+            latencyModificated[pos] = individual->getPerformanceLatency();
+            pos++;
+
+            //qDebug("tamano del vector discovery: %s", qPrintable(QString::number(discovery.count())));
+            //qDebug("tamano del vector latency: %s", qPrintable(QString::number(latency.count())));
+        }
+    }
+
+
+    // generar el grafico de todas las soluciones no dominadas para el
+    // algoritmo original y el modificado
+
+    ui->customPlotExecutions->legend->setVisible(true);
+    QFont legendFont = font();  // start out with MainWindow's font..
+    legendFont.setPointSize(9); // and make a bit smaller for legend
+    ui->customPlotExecutions->legend->setFont(legendFont);
+    ui->customPlotExecutions->legend->setBrush(QBrush(QColor(255,255,255,230)));
+    // by default, the legend is in the inset layout of the main axis rect. So this is how we access it to change legend placement:
+    ui->customPlotExecutions->axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+    ui->customPlotExecutions->clearGraphs();
+
+    // create graph and assign data to it:
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(0)->setPen(QPen(Qt::blue)); // line color blue for first graph
+    ui->customPlotExecutions->graph(0)->setData(discoveryOriginal, latencyOriginal);
+    //ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlotExecutions->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
+    ui->customPlotExecutions->graph(0)->setName("Original");
+
+
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(1)->setPen(QPen(Qt::green)); // line color green for second graph
+    ui->customPlotExecutions->graph(1)->setData(discoveryModificated, latencyModificated);
+    ui->customPlotExecutions->graph(1)->setLineStyle(QCPGraph::lsNone);
+    ui->customPlotExecutions->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::green, 4));
+    ui->customPlotExecutions->graph(1)->setName("Modificated");
+
+    // give the axes some labels:
+    ui->customPlotExecutions->xAxis->setLabel("Descubierta (#APs)");
+    ui->customPlotExecutions->yAxis->setLabel("Latencia (ms)");
+    // set axes ranges, so we see all data:
+    ui->customPlotExecutions->xAxis->setRange(0, 75);
+    ui->customPlotExecutions->yAxis->setRange(0, 300);
+
+    ui->customPlotExecutions->yAxis->grid()->setSubGridVisible(true);
+
+    ui->customPlotExecutions->replot();
+
+
+    repeatedOriginalSolutionList.clear();
+    repeatedModificatedSolutionList.clear();
+
+}
+
+int MainWindow::getCountOfNonDominatedInOriginalRepetitions()
+{
+    // identificar el número total de individuos de todas las ejecuciones
+    int counter = 0;
+    for (int x=0; x<repeatedOriginalSolutionList.count(); x++)
+    {
+        counter = counter + repeatedOriginalSolutionList.at(x).count();
+    }
+    return counter;
+}
+
+int MainWindow::getCountOfNonDominatedInModificatedRepetitions()
+{
+    // identificar el número total de individuos de todas las ejecuciones
+    int counter = 0;
+    for (int x=0; x<repeatedModificatedSolutionList.count(); x++)
+    {
+        counter = counter + repeatedModificatedSolutionList.at(x).count();
+    }
+    return counter;
+}
+
+
+

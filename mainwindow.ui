@@ -566,6 +566,19 @@
        </property>
       </widget>
      </widget>
+     <widget class="QPushButton" name="pushButtonCompareExecutions">
+      <property name="geometry">
+       <rect>
+        <x>20</x>
+        <y>210</y>
+        <width>171</width>
+        <height>31</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Comparar ejecuciones</string>
+      </property>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -575,7 +588,7 @@
      <x>0</x>
      <y>0</y>
      <width>880</width>
-     <height>19</height>
+     <height>29</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuArchivo">

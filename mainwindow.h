@@ -41,6 +41,12 @@ private:
 
     QList< QList<Individual *> > repeatedSolutionList;
 
+
+    QList< QList<Individual *> > repeatedOriginalSolutionList;
+
+    QList< QList<Individual *> > repeatedModificatedSolutionList;
+
+
 public:
 
     /**
@@ -91,6 +97,22 @@ public:
      * @return
      */
     int getCountOfNonDominatedInRepetitions();
+
+    /**
+     * @brief Retorna el numero de individuos no dominados de todas las repeticiones
+     * del algoritmo original
+     * @return
+     */
+
+    int getCountOfNonDominatedInOriginalRepetitions();
+
+    /**
+     * @brief Retorna el numero de individuos no dominados de todas las repeticiones
+     * del algoritmo modificado
+     * @return
+     */
+    int getCountOfNonDominatedInModificatedRepetitions();
+
 
 
     /**
@@ -150,6 +172,15 @@ public slots:
     void view();
 
     void viewAll();
+
+    /**
+     * @brief slot para comparacion la ejecucion repetida 30 veces de cada uno de los algoritmos
+     *
+     * Se ejecuta primero el algorimo original y almacenan todos los individuos no dominados,
+     * luego se ejecuta el algoritmo con la mutación dirigida y se
+     *
+     */
+    void compareAlgorithmRepeated();
 
 
 private:
