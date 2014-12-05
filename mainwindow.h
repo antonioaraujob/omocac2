@@ -131,6 +131,24 @@ public:
      */
     double getStandardDeviation(double mean, int fo = 1);
 
+
+    /**
+     * @brief Retorna el tiempo promedio de ejecucion de 30 repeticiones
+     * @param l lista de los tiempos de ejecucion de las 30 repeticiones
+     * @return tiempo promedio de ejecucion de 30 repeticiones
+     */
+    double getMeanExecutionTime(QList<double> l);
+
+    /**
+     * @brief Retorna la desviacion estandar del tiempo de ejecucion
+     * @param l lista de los tiempos de ejecucion de las 30 repeticiones
+     * @param mean tiempo promedio
+     * @return
+     */
+    double getStdDeviationExecutionTime(QList<double> l, double mean);
+
+
+
 public slots:
 
     /**

@@ -1353,7 +1353,8 @@ void MainWindow::compareAlgorithmRepeated()
     qDebug("MainWindow::compareAlgorithmRepeated()");
 
     QTime timer;
-    QList<int> executionTimeList;
+    QList<double> executionTimeList;
+
 
 
     // ejecuciones del algoritmo original
@@ -1365,6 +1366,10 @@ void MainWindow::compareAlgorithmRepeated()
         QList<Individual*> list(genericAlgorithmSolutions);
         repeatedOriginalSolutionList.append(list);
     }
+    // calcular el tiempo promedio de ejecucion del algoritmo original
+    double meanExecutionTimeOriginal = getMeanExecutionTime(executionTimeList);
+    double stdExecutionTimeOriginal = getStdDeviationExecutionTime(executionTimeList, meanExecutionTimeOriginal);
+    executionTimeList.clear();
 
     // ejecuciones del algoritmo modificado
     ui->checkBoxDirectedMutation->setChecked(true);
@@ -1376,6 +1381,35 @@ void MainWindow::compareAlgorithmRepeated()
         QList<Individual*> list(modificatedAlgorithmSolutions);
         repeatedModificatedSolutionList.append(list);
     }
+
+    // calcular el tiempo promedio de ejecucion del algoritmo modificado
+    double meanExecutionTimeModificated = getMeanExecutionTime(executionTimeList);
+    double stdExecutionTimeModificated = getStdDeviationExecutionTime(executionTimeList, meanExecutionTimeModificated);
+
+    qDebug("Promedio de tiempo de ejecución original:");
+    qDebug(qPrintable(QString::number(meanExecutionTimeOriginal)+" ms, "+QString::number(stdExecutionTimeOriginal)));
+
+    qDebug("Promedio de tiempo de ejecución modificado:");
+    qDebug(qPrintable(QString::number(meanExecutionTimeModificated)+" ms, "+QString::number(stdExecutionTimeModificated)));
+
+    qDebug("Promedio de numero de individuos no dominados algoritmo original:");
+    int totalIndividuals = 0;
+    for (int j=0; j<repeatedOriginalSolutionList.count(); j++)
+    {
+        totalIndividuals = totalIndividuals + repeatedOriginalSolutionList.at(j).count();
+    }
+    double meanNonDominatedIndividuals1 = totalIndividuals/repeatedOriginalSolutionList.count();
+    qDebug(qPrintable(QString::number(meanNonDominatedIndividuals1)+" individuos"));
+
+    qDebug("Promedio de numero de individuos no dominados algoritmo modificado:");
+    int totalIndividuals2 = 0;
+    for (int j=0; j<repeatedModificatedSolutionList.count(); j++)
+    {
+        totalIndividuals2 = totalIndividuals2 + repeatedModificatedSolutionList.at(j).count();
+    }
+    double meanNonDominatedIndividuals2 = totalIndividuals2/repeatedModificatedSolutionList.count();
+    qDebug(qPrintable(QString::number(meanNonDominatedIndividuals2)+" individuos"));
+
 
     // deseleccionar el check para modificacion
     ui->checkBoxDirectedMutation->setChecked(false);
@@ -1497,5 +1531,31 @@ int MainWindow::getCountOfNonDominatedInModificatedRepetitions()
     return counter;
 }
 
+double MainWindow::getMeanExecutionTime(QList<double> l)
+{
 
+    double sumOfExecutionTime= 0;
+
+    for (int j=0; j<l.count(); j++)
+    {
+        sumOfExecutionTime = sumOfExecutionTime + l.at(j);
+
+    }
+    return sumOfExecutionTime/l.count();
+
+}
+
+
+double MainWindow::getStdDeviationExecutionTime(QList<double> l, double mean)
+{
+    double numerator = 0;
+    double denominator = l.count();
+
+    for (int j=0; j<l.count(); j++)
+    {
+        numerator = numerator + pow((l.at(j)-mean),2);
+
+    }
+    return sqrt(numerator/denominator);
+}
 
