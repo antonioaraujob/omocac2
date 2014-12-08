@@ -1478,6 +1478,8 @@ void MainWindow::compareAlgorithmRepeated()
         vectorPosition++;
     }
 
+    // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
+    reportIndividualAsFile(myList,"individuosFrenteParetoOriginal");
 
     myList.clear();
 
@@ -1496,6 +1498,8 @@ void MainWindow::compareAlgorithmRepeated()
         vectorPosition++;
     }
 
+    // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
+    reportIndividualAsFile(myList,"individuosFrenteParetoModificado");
 
     qDebug("--------");
     //---------------------------------------------------------------------------
@@ -1612,7 +1616,11 @@ void MainWindow::compareAlgorithmRepeated()
 
     ui->customPlotExecutions->replot();
 
+    // imprimir las individuos
+    reportIndividualAsFile(getNonDominatedIndividualsFromList(repeatedOriginalSolutionList), "individuosAlgoritmoOriginal");
+    reportIndividualAsFile(getNonDominatedIndividualsFromList(repeatedModificatedSolutionList), "individuosAlgoritmoModificado");
 
+    // limpiar las listas para las siguientes ejecuciones
     repeatedOriginalSolutionList.clear();
     repeatedModificatedSolutionList.clear();
 
@@ -1732,35 +1740,28 @@ QList<Individual*> MainWindow::getNonDominatedIndivualsFromRepetitions(bool orig
     }
     return nonDominatedListToReturn;
 
-    /*
-    for (int i=0; i<auxiliaryList.count(); i++)
-    {
-        individual1 = auxiliaryList.at(i);
-        for (int j=0; j<auxiliaryList.count(); j++)
-        {
-            if (i==j)
-            {
-                continue;
-            }
-            individual2 = auxiliaryList.at(j);
 
-            if (auxiliaryExternalFile.individualDominate(individual1, individual2))
-            {
-                if (j==auxiliaryList.count()-1)
-                {
-                    nonDominatedListToReturn.append(individual1);
-                }
-                else
-                {
-                    continue;
-                }
-            }
-            else
-            {
-                break;
-            }
-        }
+}
+
+void MainWindow::reportIndividualAsFile(QList<Individual*> list, QString fileName)
+{
+    QFile file("/tmp/"+fileName+".txt");
+    if (file.exists())
+    {
+        file.remove();
     }
-    return nonDominatedListToReturn;
-    */
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Append))
+    {
+        QString msg = "No se pudo crear el archivo /tmp/"+fileName+".txt";
+        qDebug(qPrintable(msg));
+        return;
+    }
+    QTextStream out(&file);
+    out << endl << "/tmp/"+fileName+".txt - Individuos encontrados luego de ejecutar el algoritmo cultural: " << "\n";
+
+    QString aux;
+    for(int i=0; i<list.count(); i++)
+    {
+        out << list.at(i)->getIndividualAsQString() << "\n";
+    }
 }

@@ -208,9 +208,9 @@ void Individual::printIndividual()
         if (j!=43)
             individualString.append("-");
     }
-    individualString.append("|");
+    individualString.append("-");
     individualString.append(QString::number(getPerformanceDiscovery()));
-    individualString.append("|");
+    individualString.append("-");
     individualString.append(QString::number(getPerformanceLatency()));
     qDebug(qPrintable(individualString));
     //qDebug("Fo:%f",getPerformanceValue());
@@ -226,9 +226,9 @@ QString Individual::getIndividualAsQString()
         if (j!=43)
             individualString.append("-");
     }
-    individualString.append("|");
+    individualString.append("-");
     individualString.append(QString::number(getPerformanceDiscovery()));
-    individualString.append("|");
+    individualString.append("-");
     individualString.append(QString::number(getPerformanceLatency()));
     return individualString;
 }

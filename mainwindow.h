@@ -167,6 +167,15 @@ public:
     QList<Individual*> getNonDominatedIndivualsFromRepetitions(bool original);
 
 
+    /**
+     * @brief Funcion para generar un archivo con los individuos de la lista pasada como
+     * argumento
+     * @param list lista de individuos para escribir en el archivo
+     * @param fileName nombre del archivo que almacenara los individuos. La ruta del archivo
+     * sera: /tmp/fileName.txt
+     */
+    void reportIndividualAsFile(QList<Individual*> list, QString fileName);
+
 public slots:
 
     /**
