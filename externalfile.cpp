@@ -5,12 +5,26 @@ ExternalFile::ExternalFile(int externalFileSize)
     maxExternalFileSize = externalFileSize;
 }
 
+ExternalFile::ExternalFile()
+{
+    maxExternalFileSize = 0;
+}
+
 ExternalFile::~ExternalFile()
 {
 
 }
 
+void ExternalFile::setSize(int size)
+{
+    maxExternalFileSize = size;
+}
 
+
+int ExternalFile::getSize()
+{
+    return maxExternalFileSize;
+}
 
 
 

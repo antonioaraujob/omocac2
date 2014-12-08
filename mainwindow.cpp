@@ -876,15 +876,15 @@ void MainWindow::repeatAlgorithm()
     }
 */
 
-    double meanF1 = getMeanOfObjectiveFunction();
+    double meanF1 = getMeanOfObjectiveFunction(1, repeatedSolutionList, 0);
     qDebug("Promedio de Fo1: %s", qPrintable(QString::number(meanF1)));
-    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF1,1))));
+    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF1,1, repeatedSolutionList, 0))));
 
 
 
-    double meanF2 = getMeanOfObjectiveFunction(2);
+    double meanF2 = getMeanOfObjectiveFunction(2, repeatedSolutionList, 0);
     qDebug("Promedio de Fo2: %s", qPrintable(QString::number(meanF2)));
-    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF2,2))));
+    qDebug("STD de Fo1: %s", qPrintable(QString::number(getStandardDeviation(meanF2,2, repeatedSolutionList, 0))));
 
 
 
@@ -1271,18 +1271,33 @@ int MainWindow::getCountOfNonDominatedInRepetitions()
     return counter;
 }
 
-double MainWindow::getMeanOfObjectiveFunction(int fo)
+double MainWindow::getMeanOfObjectiveFunction(int fo, QList<QList<Individual *> >list, int type)
 {
-    int counter = getCountOfNonDominatedInRepetitions();
+    int counter = 0; //getCountOfNonDominatedInRepetitions();
+
+    if (type==0)
+    {
+        counter = getCountOfNonDominatedInRepetitions();
+    }
+    else if (type==1)
+    {
+        counter = getCountOfNonDominatedInOriginalRepetitions();
+    }else if (type==2)
+    {
+        counter = getCountOfNonDominatedInModificatedRepetitions();
+    }
+
     double sumOfDiscovery = 0;
     double sumOfLatency = 0;
 
     QList<Individual *> listOfNonDominated;
     Individual * individual;
 
-    for (int j=0; j<repeatedSolutionList.count(); j++)
+    //for (int j=0; j<repeatedSolutionList.count(); j++)
+    for (int j=0; j<list.count(); j++)
     {
-        listOfNonDominated = repeatedSolutionList.at(j);
+        //listOfNonDominated = repeatedSolutionList.at(j);
+        listOfNonDominated = list.at(j);
         for (int k=0; k<listOfNonDominated.count(); k++)
         {
             individual = listOfNonDominated.at(k);
@@ -1309,18 +1324,32 @@ double MainWindow::getMeanOfObjectiveFunction(int fo)
     //qDebug("Promedio de Fo2: %s", qPrintable(QString::number(sumOfLatency/counter)));
 }
 
-double MainWindow::getStandardDeviation(double mean, int fo)
+double MainWindow::getStandardDeviation(double mean, int fo, QList<QList<Individual *> >list, int type)
 {
     double numerator = 0;
-    double denominator = getCountOfNonDominatedInRepetitions();
+    double denominator = 0; // getCountOfNonDominatedInRepetitions();
+
+    if (type==0)
+    {
+        denominator = getCountOfNonDominatedInRepetitions();
+    }
+    else if (type==1)
+    {
+        denominator = getCountOfNonDominatedInOriginalRepetitions();
+    }else if (type==2)
+    {
+        denominator = getCountOfNonDominatedInModificatedRepetitions();
+    }
 
 
     QList<Individual *> listOfNonDominated;
     Individual * individual;
 
-    for (int j=0; j<repeatedSolutionList.count(); j++)
+    //for (int j=0; j<repeatedSolutionList.count(); j++)
+    for (int j=0; j<list.count(); j++)
     {
-        listOfNonDominated = repeatedSolutionList.at(j);
+        //listOfNonDominated = repeatedSolutionList.at(j);
+        listOfNonDominated = list.at(j);
         for (int k=0; k<listOfNonDominated.count(); k++)
         {
             individual = listOfNonDominated.at(k);
@@ -1386,11 +1415,13 @@ void MainWindow::compareAlgorithmRepeated()
     double meanExecutionTimeModificated = getMeanExecutionTime(executionTimeList);
     double stdExecutionTimeModificated = getStdDeviationExecutionTime(executionTimeList, meanExecutionTimeModificated);
 
+    qDebug("------");
     qDebug("Promedio de tiempo de ejecución original:");
     qDebug(qPrintable(QString::number(meanExecutionTimeOriginal)+" ms, "+QString::number(stdExecutionTimeOriginal)));
 
     qDebug("Promedio de tiempo de ejecución modificado:");
     qDebug(qPrintable(QString::number(meanExecutionTimeModificated)+" ms, "+QString::number(stdExecutionTimeModificated)));
+    qDebug("------");
 
     qDebug("Promedio de numero de individuos no dominados algoritmo original:");
     int totalIndividuals = 0;
@@ -1409,6 +1440,65 @@ void MainWindow::compareAlgorithmRepeated()
     }
     double meanNonDominatedIndividuals2 = totalIndividuals2/repeatedModificatedSolutionList.count();
     qDebug(qPrintable(QString::number(meanNonDominatedIndividuals2)+" individuos"));
+    qDebug("------");
+
+
+
+    double meanF1Original = getMeanOfObjectiveFunction(1, repeatedOriginalSolutionList, 1);
+    qDebug("Promedio de Fo1 original: %s", qPrintable(QString::number(meanF1Original)));
+    qDebug("STD de Fo1 original: %s", qPrintable(QString::number(getStandardDeviation(meanF1Original, 1, repeatedOriginalSolutionList, 1))));
+    double meanF2Original = getMeanOfObjectiveFunction(2, repeatedOriginalSolutionList, 1);
+    qDebug("Promedio de Fo2 original: %s", qPrintable(QString::number(meanF2Original)));
+    qDebug("STD de Fo2 original: %s", qPrintable(QString::number(getStandardDeviation(meanF2Original, 2, repeatedOriginalSolutionList, 1))));
+
+
+    double meanF1Modificated = getMeanOfObjectiveFunction(1, repeatedModificatedSolutionList, 2);
+    qDebug("Promedio de Fo1 modificada: %s", qPrintable(QString::number(meanF1Modificated)));
+    qDebug("STD de Fo1 modificada: %s", qPrintable(QString::number(getStandardDeviation(meanF1Modificated, 1, repeatedModificatedSolutionList, 2))));
+    double meanF2Modificated = getMeanOfObjectiveFunction(2, repeatedModificatedSolutionList, 2);
+    qDebug("Promedio de Fo2 modificada: %s", qPrintable(QString::number(meanF2Modificated)));
+    qDebug("STD de Fo2 modificada: %s", qPrintable(QString::number(getStandardDeviation(meanF2Modificated, 2, repeatedModificatedSolutionList, 2))));
+
+
+    //---------------------------------------------------------------------------
+    // prueba de obtener los no dominados de todas las ejecuciones del algoritmo
+    QList<Individual*> myList = getNonDominatedIndivualsFromRepetitions(true);
+    qDebug("--------");
+    qDebug("individuos no dominados del algoritmo original: %s", qPrintable(QString::number(myList.count())));
+
+    QVector<double> discoveryParetoOriginal(myList.count()), latencyParetoOriginal(myList.count());
+    Individual * paretoIndividual;
+    int vectorPosition = 0;
+
+    for (int i=0; i<myList.count();i++)
+    {
+        paretoIndividual = myList.at(i);
+        discoveryParetoOriginal[vectorPosition] = paretoIndividual->getPerformanceDiscovery();
+        latencyParetoOriginal[vectorPosition] = paretoIndividual->getPerformanceLatency();
+        vectorPosition++;
+    }
+
+
+    myList.clear();
+
+    myList = getNonDominatedIndivualsFromRepetitions(false);
+    qDebug("--------");
+    qDebug("individuos no dominados del algoritmo modificado: %s", qPrintable(QString::number(myList.count())));
+
+    QVector<double> discoveryParetoModificated(myList.count()), latencyParetoModificated(myList.count());
+    vectorPosition = 0;
+
+    for (int i=0; i<myList.count();i++)
+    {
+        paretoIndividual = myList.at(i);
+        discoveryParetoModificated[vectorPosition] = paretoIndividual->getPerformanceDiscovery();
+        latencyParetoModificated[vectorPosition] = paretoIndividual->getPerformanceLatency();
+        vectorPosition++;
+    }
+
+
+    qDebug("--------");
+    //---------------------------------------------------------------------------
 
 
     // deseleccionar el check para modificacion
@@ -1482,7 +1572,7 @@ void MainWindow::compareAlgorithmRepeated()
     //ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsLine);
     ui->customPlotExecutions->graph(0)->setLineStyle(QCPGraph::lsNone);
     ui->customPlotExecutions->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
-    ui->customPlotExecutions->graph(0)->setName("Original");
+    ui->customPlotExecutions->graph(0)->setName("Unmodified algorithm");
 
 
     ui->customPlotExecutions->addGraph();
@@ -1490,11 +1580,30 @@ void MainWindow::compareAlgorithmRepeated()
     ui->customPlotExecutions->graph(1)->setData(discoveryModificated, latencyModificated);
     ui->customPlotExecutions->graph(1)->setLineStyle(QCPGraph::lsNone);
     ui->customPlotExecutions->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::green, 4));
-    ui->customPlotExecutions->graph(1)->setName("Modificated");
+    ui->customPlotExecutions->graph(1)->setName("Modified algorithm");
+
+    // puntos del frente de pareto algoritmo original
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(2)->setPen(QPen(Qt::blue)); // line color blue for first graph
+    ui->customPlotExecutions->graph(2)->setData(discoveryParetoOriginal, latencyParetoOriginal);
+    ui->customPlotExecutions->graph(2)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(2)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
+    ui->customPlotExecutions->graph(2)->setName("Unmodified Pareto Front");
+
+    // puntos del frente de pareto algoritmo modificado
+    ui->customPlotExecutions->addGraph();
+    ui->customPlotExecutions->graph(3)->setPen(QPen(Qt::green)); // line color blue for first graph
+    ui->customPlotExecutions->graph(3)->setData(discoveryParetoModificated, latencyParetoModificated);
+    ui->customPlotExecutions->graph(3)->setLineStyle(QCPGraph::lsLine);
+    ui->customPlotExecutions->graph(3)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::green, 4));
+    ui->customPlotExecutions->graph(3)->setName("Modified Pareto Front");
+
+
+
 
     // give the axes some labels:
-    ui->customPlotExecutions->xAxis->setLabel("Descubierta (#APs)");
-    ui->customPlotExecutions->yAxis->setLabel("Latencia (ms)");
+    ui->customPlotExecutions->xAxis->setLabel("Discovery ( Number of APs)");
+    ui->customPlotExecutions->yAxis->setLabel("Latency (ms)");
     // set axes ranges, so we see all data:
     ui->customPlotExecutions->xAxis->setRange(0, 75);
     ui->customPlotExecutions->yAxis->setRange(0, 300);
@@ -1559,3 +1668,99 @@ double MainWindow::getStdDeviationExecutionTime(QList<double> l, double mean)
     return sqrt(numerator/denominator);
 }
 
+QList<Individual*> MainWindow::getNonDominatedIndividualsFromList(QList<QList<Individual *> > list)
+{
+    QList<Individual *> individualList;
+
+    QList<Individual*> auxiliaryList;
+    Individual * individual;
+    for (int j=0; j<list.count(); j++)
+    {
+        auxiliaryList = list.at(j);
+        for (int k=0; k<auxiliaryList.count(); k++)
+        {
+            individual = auxiliaryList.at(k);
+            individualList.append(individual);
+        }
+    }
+    return individualList;
+}
+
+
+QList<Individual*> MainWindow::getNonDominatedIndivualsFromRepetitions(bool original)
+{
+    QList<Individual*> auxiliaryList;
+    if (original)
+    {
+        auxiliaryList = getNonDominatedIndividualsFromList(repeatedOriginalSolutionList);
+    }
+    else
+    {
+        auxiliaryList = getNonDominatedIndividualsFromList(repeatedModificatedSolutionList);
+    }
+
+    QList<Individual*> nonDominatedListToReturn;
+
+    ExternalFile auxiliaryExternalFile;
+    int p = auxiliaryList.count();
+
+    Individual * individualI;
+    Individual * individualJ;
+
+    for (int i=0; i<p; i++)
+    {
+        bool dominated = false;
+        individualI = auxiliaryList.at(i);
+
+        for (int j=0; ((j<p) && (!dominated)); j++)
+        {
+
+            if (i==j)
+            {
+                continue;
+            }
+            individualJ = auxiliaryList.at(j);
+            if (auxiliaryExternalFile.individualDominate(individualJ, individualI))
+            {
+                dominated = true;
+            }
+        }
+        if (!dominated)
+        {
+            nonDominatedListToReturn.append(individualI);
+        }
+    }
+    return nonDominatedListToReturn;
+
+    /*
+    for (int i=0; i<auxiliaryList.count(); i++)
+    {
+        individual1 = auxiliaryList.at(i);
+        for (int j=0; j<auxiliaryList.count(); j++)
+        {
+            if (i==j)
+            {
+                continue;
+            }
+            individual2 = auxiliaryList.at(j);
+
+            if (auxiliaryExternalFile.individualDominate(individual1, individual2))
+            {
+                if (j==auxiliaryList.count()-1)
+                {
+                    nonDominatedListToReturn.append(individual1);
+                }
+                else
+                {
+                    continue;
+                }
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
+    return nonDominatedListToReturn;
+    */
+}

@@ -40,10 +40,26 @@ public:
     ExternalFile(int externalFileSize);
 
     /**
+     * @brief Constructor de la clase
+     */
+    ExternalFile();
+
+    /**
      * @brief Destructor de la clase
      */
     ~ExternalFile();
 
+    /**
+     * @brief Asigna el tamano del archivo externo
+     * @param size tamano del archivo externo
+     */
+    void setSize(int size);
+
+    /**
+     * @brief Retorna el tamano del archivo Externo
+     * @return Retorna el tamano del archivo Externo
+     */
+    int getSize();
 
     /**
     * @brief Devuelve el limite inferior de la funcion objetivo 1 para los individuos

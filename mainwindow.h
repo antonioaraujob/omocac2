@@ -119,17 +119,20 @@ public:
      * @brief Retorna el promedio de la funcion objetivo de todos los individuos no dominados
      * luego de las repeticiones del algoritmo
      * @param fo identificador de la funcion objetivo: 1 para descubierta, 2 para latencia
+     * @param list lista de individuos no dominados sobre la cual calcular el promedio
+     *
      * @return promedio de la funcion objetivo
      */
-    double getMeanOfObjectiveFunction(int fo=1);
+    double getMeanOfObjectiveFunction(int fo, QList<QList<Individual *> > list , int type);
 
     /**
      * @brief retorna la desviacion estandar de la funcion objetivo pasada como argumento
      * @param mean media de la funcion objetivo seleccionada
      * @param fo funcion objetivo seleccionada: 1 para descubierta, 2 para latencia
+     * @param list lista de individuos no dominados sobre la cual calcular el promedio
      * @return desviacion estandar de la funcion objetivo pasada como argumento
      */
-    double getStandardDeviation(double mean, int fo = 1);
+    double getStandardDeviation(double mean, int fo, QList<QList<Individual *> >list, int type);
 
 
     /**
@@ -147,6 +150,21 @@ public:
      */
     double getStdDeviationExecutionTime(QList<double> l, double mean);
 
+
+    /**
+     * @brief Retorna la lista de individuos no dominados de la lista pasada como argumento
+     * @param list lista de individuos de los cuales obtener los no dominados
+     * @return lista de individuos no dominados
+     */
+    QList<Individual*> getNonDominatedIndividualsFromList(QList<QList<Individual*> >list);
+
+    /**
+     * @brief Retorna la lista de individuos no dominados de las 30 ejecuciones del algoritmo
+     * @param original verdadero si se debe utilizar la lista del algoritmo original; falso en caso
+     * de usar la lista del algoritmo modificado.
+     * @return lista de individuos no dominados (aproximacion del frente de Pareto)
+     */
+    QList<Individual*> getNonDominatedIndivualsFromRepetitions(bool original);
 
 
 public slots:
