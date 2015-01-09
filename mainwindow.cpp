@@ -25,9 +25,9 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEditPopulationSize->setValidator(validatorPopSize);
     ui->lineEditPopulationSize->setToolTip("[1..1000]");
 
-    QValidator * validatorGenerations = new QIntValidator(1, 50, this);
+    QValidator * validatorGenerations = new QIntValidator(1, 10000, this);
     ui->lineEditGenerationNumber->setValidator(validatorGenerations);
-    ui->lineEditGenerationNumber->setToolTip("[1..50]");
+    ui->lineEditGenerationNumber->setToolTip("[1..10000]");
 
     //QValidator * validatorAcceptedPercentage = new QIntValidator(1, 100, this);
     //ui->lineEditAceptationPercentage->setValidator(validatorAcceptedPercentage);
@@ -45,7 +45,7 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->lineEditGridSubintervals->setValidator(validatorGridSubintervals);
     ui->lineEditGridSubintervals->setToolTip("[1..10]");
 
-    QValidator * validatorGnormative = new QIntValidator(1, 20, this);
+    QValidator * validatorGnormative = new QIntValidator(1, 100, this);
     ui->lineEditGnormative->setValidator(validatorGnormative);
     ui->lineEditGnormative->setToolTip("[1..20]");
 
@@ -1481,6 +1481,12 @@ void MainWindow::compareAlgorithmRepeated()
     // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
     reportIndividualAsFile(myList,"individuosFrenteParetoOriginal");
 
+
+    // colocar las cadenas en la pestana de cadenas de la interfaz grafica
+    populateAListView(myList, ui->listViewPFOriginal);
+
+
+
     myList.clear();
 
     myList = getNonDominatedIndivualsFromRepetitions(false);
@@ -1500,6 +1506,9 @@ void MainWindow::compareAlgorithmRepeated()
 
     // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
     reportIndividualAsFile(myList,"individuosFrenteParetoModificado");
+
+    // colocar las cadenas en la pestana de cadenas de la interfaz grafica
+    populateAListView(myList, ui->listViewPFModificated);
 
     qDebug("--------");
     //---------------------------------------------------------------------------
@@ -1763,5 +1772,34 @@ void MainWindow::reportIndividualAsFile(QList<Individual*> list, QString fileNam
     for(int i=0; i<list.count(); i++)
     {
         out << list.at(i)->getIndividualAsQString() << "\n";
+    }
+}
+
+void MainWindow::populateAListView(QList<Individual*> list, QListView * listView)
+{
+
+    QStringList individuals;
+
+    QString aux;
+    for (int i=0; i<list.count(); i++)
+    //for (int z=simulation->getExternalFile()->getExternalFileList().count()-1; z>=0; z-- )
+    {
+        aux.append(list.at(i)->getIndividualAsQString());
+        individuals << aux;
+        aux.clear();
+    }
+
+    QStringListModel *model = new QStringListModel();
+    model->setStringList(individuals);
+
+    //ui->listViewPFO->setModel(model);
+    listView->setModel(model);
+
+    if (listView->objectName() == "listViewPFOriginal")
+    {
+        ui->labelNumberPFOriginal->setText(QString::number(list.count()));
+    }else if (listView->objectName() == "listViewPFModificated")
+    {
+        ui->labelNumberPFModificated->setText(QString::number(list.count()));
     }
 }

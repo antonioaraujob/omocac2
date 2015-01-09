@@ -176,6 +176,15 @@ public:
      */
     void reportIndividualAsFile(QList<Individual*> list, QString fileName);
 
+
+    /**
+     * @brief Funcion para colocar las cadenas de individuos en los listview de la
+     * pestana de cadenas de la interfaz grafica
+     * @param list lista de individuos a colocar en el listview
+     * @param listView listview donde se colocan los individuos
+     */
+    void populateAListView(QList<Individual*> list, QListView * listView);
+
 public slots:
 
     /**
