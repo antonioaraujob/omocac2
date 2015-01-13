@@ -12,6 +12,18 @@
 #include <QSet>
 #include <QDoubleValidator>
 
+/**
+ * @brief Funcion de comparacion de individuos con respecto al valor de desempeno de latencia
+ * @param p1 Individuo 1 a comparar
+ * @param p2 Individuo 2 a comparar
+ * @return Verdadero si p1 es menor que p2 con respecto a la funcion objetivo de latencia
+ */
+inline static bool xLessThanLatency(Individual *p1, Individual *p2)
+{
+    return p1->getPerformanceLatency() < p2->getPerformanceLatency();
+}
+
+
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
@@ -1777,6 +1789,10 @@ void MainWindow::reportIndividualAsFile(QList<Individual*> list, QString fileNam
 
 void MainWindow::populateAListView(QList<Individual*> list, QListView * listView)
 {
+
+    // ordenar la lista en orden ascendente de acuerdo a la latencia (F2)
+    qSort(list.begin(), list.end(), xLessThanLatency);
+
 
     QStringList individuals;
 
