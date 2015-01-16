@@ -1490,6 +1490,11 @@ void MainWindow::compareAlgorithmRepeated()
         vectorPosition++;
     }
 
+
+    // ordenar la lista en orden ascendente de acuerdo a la latencia (F2)
+    qSort(myList.begin(), myList.end(), xLessThanLatency);
+
+
     // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
     reportIndividualAsFile(myList,"individuosFrenteParetoOriginal");
 
@@ -1515,6 +1520,9 @@ void MainWindow::compareAlgorithmRepeated()
         latencyParetoModificated[vectorPosition] = paretoIndividual->getPerformanceLatency();
         vectorPosition++;
     }
+
+    // ordenar la lista en orden ascendente de acuerdo a la latencia (F2)
+    qSort(myList.begin(), myList.end(), xLessThanLatency);
 
     // escribir en un archivo los individuos del frente de pareto encontrado en un archivo
     reportIndividualAsFile(myList,"individuosFrenteParetoModificado");
