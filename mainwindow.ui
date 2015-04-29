@@ -11,10 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Algoritmo Cultural</string>
+   <string>Cultural Algorithm</string>
   </property>
   <widget class="QWidget" name="centralWidget">
    <widget class="QTabWidget" name="tabWidgetExecution">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -28,7 +31,7 @@
     </property>
     <widget class="QWidget" name="tabExecutionIndividual">
      <attribute name="title">
-      <string>Tab ejecucion individual</string>
+      <string>Execution</string>
      </attribute>
      <widget class="QFrame" name="frame">
       <property name="geometry">
@@ -55,7 +58,7 @@
         </rect>
        </property>
        <property name="text">
-        <string>Parámetros del Algoritmo Cultural</string>
+        <string>Cultural algorithm parameters</string>
        </property>
        <property name="alignment">
         <set>Qt::AlignCenter</set>
@@ -81,14 +84,14 @@
         <item row="1" column="0">
          <widget class="QLabel" name="label_3">
           <property name="text">
-           <string>Número máximo de generaciones</string>
+           <string>Maximun number of generations</string>
           </property>
          </widget>
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="label_2">
           <property name="text">
-           <string>Tamaño de la población</string>
+           <string>Population size</string>
           </property>
          </widget>
         </item>
@@ -108,21 +111,21 @@
         <item row="2" column="0">
          <widget class="QLabel" name="label_5">
           <property name="text">
-           <string>Desviación estándar</string>
+           <string>Standard deviation</string>
           </property>
          </widget>
         </item>
         <item row="6" column="0">
          <widget class="QLabel" name="label_10">
           <property name="text">
-           <string>Número de encuentros por individuo</string>
+           <string>Number of tournaments by ind.</string>
           </property>
          </widget>
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_7">
           <property name="text">
-           <string>Tamaño máximo del archivo externo</string>
+           <string>Maximun size of external file</string>
           </property>
          </widget>
         </item>
@@ -136,7 +139,7 @@
         <item row="5" column="0">
          <widget class="QLabel" name="label_9">
           <property name="text">
-           <string>Frecuencia de actualización de parte normativa</string>
+           <string>Frequency of updating Phenotypic</string>
           </property>
          </widget>
         </item>
@@ -150,7 +153,7 @@
         <item row="4" column="0">
          <widget class="QLabel" name="label_8">
           <property name="text">
-           <string>Número de subintervalos de rejilla</string>
+           <string>Grid subinterval number</string>
           </property>
          </widget>
         </item>
@@ -188,21 +191,21 @@
         <item row="9" column="0">
          <widget class="QPushButton" name="pushButtonRun">
           <property name="text">
-           <string>Ejecutar</string>
+           <string>Execute</string>
           </property>
          </widget>
         </item>
         <item row="7" column="0">
          <widget class="QLabel" name="label_4">
           <property name="text">
-           <string>Utilizar mutación dirigida</string>
+           <string>Using directed mutation</string>
           </property>
          </widget>
         </item>
         <item row="8" column="0">
          <widget class="QLabel" name="labelDirectedMutation">
           <property name="text">
-           <string>Probabilidad de mutación dirigida</string>
+           <string>Directed mutation probability</string>
           </property>
          </widget>
         </item>
@@ -270,7 +273,7 @@
         <item>
          <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>Comparar algoritmo generico vs modificado</string>
+           <string>Compare original algorithm vs modified</string>
           </property>
           <property name="wordWrap">
            <bool>true</bool>
@@ -287,7 +290,7 @@
         <item>
          <widget class="QPushButton" name="pushButtonCompareAlgorithms">
           <property name="text">
-           <string>Ejecutar</string>
+           <string>Execute</string>
           </property>
          </widget>
         </item>
@@ -332,7 +335,7 @@
         <item>
          <widget class="QLabel" name="labelExternalFile">
           <property name="text">
-           <string>Archivo externo de individuos no dominados:</string>
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Non-dominated indivuals in external file:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
           </property>
          </widget>
         </item>
@@ -376,7 +379,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Numero de particulas AC Generico:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of individuals in CA original:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="label_AC_modificado">
@@ -389,7 +392,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Numero de particulas AC Modificado:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Number of individuals in CA modified:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="acGenericNumber">
@@ -440,7 +443,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Tiempo de ejecucion:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execution time:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
        <widget class="QLabel" name="acGenericTime">
@@ -491,7 +494,7 @@
          </rect>
         </property>
         <property name="text">
-         <string>Tiempo de ejecucion:</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Execution time:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </widget>
@@ -499,7 +502,7 @@
     </widget>
     <widget class="QWidget" name="tab_2">
      <attribute name="title">
-      <string>Tab ejecucion repetida</string>
+      <string>Repeated execution</string>
      </attribute>
      <widget class="QPushButton" name="pushButtonRepeatAlgoritm">
       <property name="geometry">
@@ -582,7 +585,7 @@
     </widget>
     <widget class="QWidget" name="tab_3">
      <attribute name="title">
-      <string>Cadenas resultantes</string>
+      <string>String result</string>
      </attribute>
      <widget class="QListView" name="listViewPFOriginal">
       <property name="geometry">
@@ -670,7 +673,7 @@
    </property>
    <widget class="QMenu" name="menuArchivo">
     <property name="title">
-     <string>Archivo</string>
+     <string>File</string>
     </property>
     <addaction name="actionSalir"/>
    </widget>

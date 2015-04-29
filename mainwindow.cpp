@@ -467,12 +467,12 @@ void MainWindow::newSetupCustomPlot(QCustomPlot *customPlot)
 
     if (ui->checkBoxDirectedMutation->isChecked())
     {
-        customPlot->graph(0)->setName("AC modificado");
+        customPlot->graph(0)->setName("CA modified");
         customPlot->graph(0)->setData(discoveryModified, latencyModified);
     }
     else
     {
-        customPlot->graph(0)->setName("AC original");
+        customPlot->graph(0)->setName("CA original");
         customPlot->graph(0)->setData(discovery, latency);
     }
 
@@ -491,8 +491,8 @@ void MainWindow::newSetupCustomPlot(QCustomPlot *customPlot)
     }
 
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Descubierta");
-    customPlot->yAxis->setLabel("Latencia");
+    customPlot->xAxis->setLabel("Discovery (#APs)");
+    customPlot->yAxis->setLabel("Latency (ms)");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, 75);
     customPlot->yAxis->setRange(0, 300);
@@ -564,18 +564,18 @@ void MainWindow::setupCustomPlot2(QCustomPlot *customPlot)
     customPlot->graph(0)->setData(discovery, latency);
     customPlot->graph(0)->setLineStyle(QCPGraph::lsLine);
     customPlot->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::red, 4));
-    customPlot->graph(0)->setName("AC original");
+    customPlot->graph(0)->setName("CA original");
 
     customPlot->addGraph();
     customPlot->graph(1)->setPen(QPen(Qt::green)); // line color green for second graph
     customPlot->graph(1)->setData(discoveryModified, latencyModified);
     customPlot->graph(1)->setLineStyle(QCPGraph::lsLine);
     customPlot->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, Qt::black, 4));
-    customPlot->graph(1)->setName("AC modificado");
+    customPlot->graph(1)->setName("CA modified");
 
     // give the axes some labels:
-    customPlot->xAxis->setLabel("Descubierta");
-    customPlot->yAxis->setLabel("Latencia");
+    customPlot->xAxis->setLabel("Discovery (#APs)");
+    customPlot->yAxis->setLabel("Latency (ms)");
     // set axes ranges, so we see all data:
     customPlot->xAxis->setRange(0, 75);
     customPlot->yAxis->setRange(0, 300);
